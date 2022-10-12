@@ -1,18 +1,21 @@
 ﻿using Image_processing.Models;
 using Image_processing.Records;
+using System.Text.RegularExpressions;
 
 namespace Image_processing.Managers
 {
     public class CommandManager
     {
-        private readonly BitmapManager bitmapManager;
+        private readonly ProcessingManager processingManager;
+        private readonly Command command;
 
-        public CommandManager(BitmapManager bitmapManager)
+        public CommandManager(ProcessingManager processingManager, Command command)
         {
-            this.bitmapManager = bitmapManager;
+            this.processingManager = processingManager;
+            this.command = command;
         }
 
-        public Command GetInputCommandFromConsole(string input)
+        public static Command GetInputCommandFromConsole(string input)
         {
             string[] inputArray = input.Split(' ');
 
@@ -32,152 +35,103 @@ namespace Image_processing.Managers
             return null;
         }
 
-        public void ExecuteCommand(Command command)
+        public void ExecuteCommand()
         {
-            if (command == null)
+            if (command.FileName == null || command.FileName == string.Empty)
             {
-                DisplayIncorrectCommandMessage(command);
+                Console.WriteLine("Incorrect command");
                 return;
             }
 
-            if (command.ImageFile == Operations.Help)
+            if (command.FileName == Operations.Help)
             {
                 DisplayHelpMessage();
-            }
-            else if (command.Operation == Operations.BrightnessModification)
-            {
-                ManageBrightnessModification();
-            }
-            else if (command.Operation == Operations.ContrastModification)
-            {
-                ManageContrastModification();
-            }
-            else if (command.Operation == Operations.Negative)
-            {
-                ManageNegative();
-            }
-            else if (command.Operation == Operations.HorizontalFlip)
-            {
-                ManageHorizontalFlip();
-            }
-            else if (command.Operation == Operations.VerticalFlip)
-            {
-                ManageVerticalFlip();
-            }
-            else if (command.Operation == Operations.DiagonalFlip)
-            {
-                ManageDiagonalFlip();
-            }
-            else if (command.Operation == Operations.ImageShrinking)
-            {
-                ManageImageShrinking();
-            }
-            else if (command.Operation == Operations.ImageEnlargement)
-            {
-                ManageImageEnlargement();
-            }
-            else if (command.Operation == Operations.MeanSquareError)
-            {
-                ManageMeanSquareError();
-            }
-            else if (command.Operation == Operations.PeakMeanSquareError)
-            {
-                ManagePeakMeanSquareError();
-            }
-            else if (command.Operation == Operations.MidpointFilter)
-            {
-                ManageMidpointFilter();
-            }
-            else if (command.Operation == Operations.ArithmeticMeanFilter)
-            {
-                ManageArithmeticMeanFilter();
-            }
-            else
-            {
-                DisplayIncorrectCommandMessage(command);
                 return;
             }
 
-            DisplayCommandExecutedMessage(command);
-        }
+            if (CheckIfFilenameIsCorrect(command.FileName) == false)
+            {
+                Console.WriteLine($"Invalid filename {command.FileName}");
+                return;
+            }
 
-        #region Task 1
+            if (command.ArgumentValue != null &&
+                CheckIfArgumentValueIsCorrect(command.ArgumentValue) == false)
+            {
+                Console.WriteLine($@"Invalid argument {command.ArgumentValue}");
+                return;
+            }
 
-        private void DisplayCommandExecutedMessage(Command command)
-        {
-            Console.WriteLine($"Command {command} has been executed.");
-        }
+            switch (command.Operation)
+            {
+                case Operations.BrightnessModification:
+                    processingManager.ManageBrightnessModification();
+                    break;
+                case Operations.ContrastModification:
+                    processingManager.ManageContrastModification();
+                    break;
+                case Operations.Negative:
+                    processingManager.ManageNegative();
+                    break;
+                case Operations.HorizontalFlip:
+                    processingManager.ManageHorizontalFlip();
+                    break;
+                case Operations.VerticalFlip:
+                    processingManager.ManageVerticalFlip();
+                    break;
+                case Operations.DiagonalFlip:
+                    processingManager.ManageDiagonalFlip();
+                    break;
+                case Operations.ImageShrinking:
+                    processingManager.ManageImageShrinking();
+                    break;
+                case Operations.ImageEnlargement:
+                    processingManager.ManageImageEnlargement();
+                    break;
+                case Operations.MeanSquareError:
+                    processingManager.ManageMeanSquareError();
+                    break;
+                case Operations.PeakMeanSquareError:
+                    processingManager.ManagePeakMeanSquareError();
+                    break;
+                case Operations.MidpointFilter:
+                    processingManager.ManageMidpointFilter();
+                    break;
+                case Operations.ArithmeticMeanFilter:
+                    processingManager.ManageArithmeticMeanFilter();
+                    break;
+                default:
+                    if (command.Operation != null)
+                    {
+                        Console.WriteLine($"Invalid operation {command.Operation}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No operation parameter has been given");
+                    }
+                    return;
+            }
 
-        private void DisplayIncorrectCommandMessage(Command command)
-        {
-            Console.WriteLine($"Command {command} is invalid.");
+            Console.WriteLine($"Command {command} has been executed successfully");
         }
 
         private void DisplayHelpMessage()
         {
-
+            Console.WriteLine("*Help message*");
         }
 
-        private void ManageBrightnessModification()
+        private bool CheckIfFilenameIsCorrect(string filename)
         {
+            string suffix = ".bmp";
 
+            return filename.Contains(suffix);
         }
 
-        private void ManageContrastModification()
+        private bool CheckIfArgumentValueIsCorrect(string argumentValue)
         {
+            string prefix = "-argument=";
 
+            return Regex.Match(argumentValue, "-argument=[0-9]").Success;
         }
-
-        private void ManageNegative()
-        {
-
-        }
-
-        private void ManageHorizontalFlip()
-        {
-
-        }
-
-        private void ManageVerticalFlip()
-        {
-
-        }
-
-        private void ManageDiagonalFlip()
-        {
-
-        }
-
-        private void ManageImageShrinking()
-        {
-
-        }
-
-        private void ManageImageEnlargement()
-        {
-
-        }
-
-        private void ManageMidpointFilter()
-        {
-
-        }
-
-        private void ManageArithmeticMeanFilter()
-        {
-
-        }
-
-        private void ManageMeanSquareError()
-        {
-
-        }
-
-        private void ManagePeakMeanSquareError()
-        {
-
-        }
-
-        #endregion
     }
 }

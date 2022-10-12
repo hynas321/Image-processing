@@ -2,37 +2,37 @@
 {
     public class Command
     {
-        public string ImageFile { get; }
-        public string Operation { get; }
-        public string ArgumentValue { get; }
+        public string FileName { get; set; }
+        public string Operation { get; set; }
+        public string ArgumentValue { get; set; }
 
         public Command(
-            string imageFile,
+            string filename,
             string operation,
             string argumentValue
         )
         {
-            ImageFile = imageFile;
+            FileName = filename;
             Operation = operation;
             ArgumentValue = argumentValue;
         }
 
         public override string ToString()
         {
-            if (ImageFile == null)
+            if (FileName == null)
             {
                 return $"null";
             }
             if (Operation == null)
             {
-                return $"{ImageFile}";
+                return $"{FileName}";
             }
             if (ArgumentValue == null)
             {
-                return $"{ImageFile} {Operation}";
+                return $"{FileName} {Operation}";
             }
 
-            return $"{ImageFile} {Operation} {ArgumentValue}";
+            return $"{FileName} {Operation} {ArgumentValue}";
         }
     }
 }
