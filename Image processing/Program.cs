@@ -6,7 +6,7 @@ namespace Image_processing
     public class Program
     {
         private static BitmapManager? bitmapManager;
-        private static ProcessingManager processingManager;
+        private static ProcessingManager? processingManager;
         private static CommandManager? commandManager;
 
         static void Main(string[] args)
@@ -29,12 +29,11 @@ namespace Image_processing
             {
                 try
                 {
-
                     Console.Write("Input: ");
 
                     bitmapManager = new BitmapManager(originalImagesFolderPath, modifiedImagesFolderPath);
 
-                    string? input = Console.ReadLine().Trim(' ');
+                    string? input = Console.ReadLine()?.Trim(' ');
                     Command command = CommandManager.GetInputCommandFromConsole(input);
 
                     processingManager = new ProcessingManager(bitmapManager, command);

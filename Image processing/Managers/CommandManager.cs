@@ -131,7 +131,7 @@ namespace Image_processing.Managers
         {
             string prefix = "-argument=";
 
-            return Regex.Match(argumentValue, "-argument=[0-9]").Success;
+            return Regex.Match(argumentValue, "-argument=-?[0-9]").Success;
         }
     }
 }
