@@ -51,11 +51,11 @@ namespace Image_processing.Managers
                 {
                     Color initialColor = bitmap.GetPixel(x, y);
 
-                    Color color = Color.FromArgb(
-                        TruncateColorValue(initialColor.R + commandArgumentValue),
-                        TruncateColorValue(initialColor.G + commandArgumentValue),
-                        TruncateColorValue(initialColor.B + commandArgumentValue)
-                    );
+                    int red = TruncateColorValue(initialColor.R + commandArgumentValue);
+                    int green = TruncateColorValue(initialColor.G + commandArgumentValue);
+                    int blue = TruncateColorValue(initialColor.B + commandArgumentValue);
+
+                    Color color = Color.FromArgb(red, green, blue);
 
                     bitmap.SetPixel(x, y, color);
                 }
@@ -66,7 +66,32 @@ namespace Image_processing.Managers
 
         public void ManageContrastModification()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+
+            double contrast = Math.Pow((100.0 + commandArgumentValue) / 100.0, 2);
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    Color initialColor = bitmap.GetPixel(x, y);
+
+                    double red = ((((initialColor.R / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    double green = ((((initialColor.G / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    double blue = ((((initialColor.B / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+                    Color color = Color.FromArgb(
+                        initialColor.A, 
+                        TruncateColorValue((int)red),
+                        TruncateColorValue((int)green),
+                        TruncateColorValue((int)blue)
+                    );
+
+                    bitmap.SetPixel(x, y, color);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
         }
 
         public void ManageNegative()
@@ -79,11 +104,11 @@ namespace Image_processing.Managers
                 {
                     Color initialColor = bitmap.GetPixel(x, y);
 
-                    Color color = Color.FromArgb(
-                        255 - initialColor.R,
-                        255 - initialColor.G,
-                        255 - initialColor.B
-                    );
+                    int red = 255 - initialColor.R;
+                    int green = 255 - initialColor.G;
+                    int blue = 255 - initialColor.B;
+
+                    Color color = Color.FromArgb(red, green, blue);
                     
                     bitmap.SetPixel(x, y, color);
                 }
