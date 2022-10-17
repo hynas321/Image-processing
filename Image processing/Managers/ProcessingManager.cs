@@ -119,17 +119,59 @@ namespace Image_processing.Managers
 
         public void ManageHorizontalFlip()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width / 2; x++)
+                {
+                    Color rightSidePixel = bitmap.GetPixel(bitmap.Width - 1 - x, y); 
+                    Color leftSidePixel = bitmap.GetPixel(x, y); 
+                                                                                       
+                    bitmap.SetPixel(bitmap.Width - 1 - x, y, leftSidePixel);
+                    bitmap.SetPixel(x, y, rightSidePixel);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
         }
 
         public void ManageVerticalFlip()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height / 2; y++)
+                {
+                    Color rightSidePixel = bitmap.GetPixel(x, bitmap.Height - 1 - y);
+                    Color leftSidePixel = bitmap.GetPixel(x, y);
+
+                    bitmap.SetPixel(x, bitmap.Height - 1 - y, leftSidePixel);
+                    bitmap.SetPixel(x, y, rightSidePixel);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
         }
 
         public void ManageDiagonalFlip()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height / 2; y++)
+                {
+                    Color rightSidePixel = bitmap.GetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y);
+                    Color leftSidePixel = bitmap.GetPixel(x, y);
+
+                    bitmap.SetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y, leftSidePixel);
+                    bitmap.SetPixel(x, y, rightSidePixel);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
         }
 
         public void ManageImageShrinking()
