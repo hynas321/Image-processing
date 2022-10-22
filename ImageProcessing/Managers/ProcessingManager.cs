@@ -1,59 +1,26 @@
-﻿using Image_processing.Models;
-using System.Drawing;
-using System.Text.RegularExpressions;
+﻿using System.Drawing;
 
 namespace Image_processing.Managers
 {
-    public class ProcessingManager
+    public static class ProcessingManager
     {
-        private readonly BitmapManager bitmapManager;
-        private readonly Command command;
-
-        private readonly int commandArgumentValue;
-
-        public ProcessingManager(BitmapManager bitmapManager, Command command)
+        public static void DisplayHelpMessage()
         {
-            this.bitmapManager = bitmapManager;
-            this.command = command;
-
-            if (command.ArgumentValue == null)
-            {
-                commandArgumentValue = 0;
-                return;
-            }
-
-            Match match = Regex.Match(command.ArgumentValue, @"[+-]?\d+(\d+)?");
-
-            if (match.Success && match.Value.Contains('-'))
-            {
-                commandArgumentValue =
-                    int.Parse(string.Concat(command.ArgumentValue.Where(char.IsDigit))) * (-1);
-            }
-            else if (match.Success)
-            {
-                commandArgumentValue =
-                    int.Parse(string.Concat(command.ArgumentValue.Where(char.IsDigit)));
-            }
-            else
-            {
-                commandArgumentValue = 0;
-            }
+            Console.WriteLine("Help!");
         }
 
         #region Task 1
-        public void ManageBrightnessModification()
+        public static Bitmap ManageBrightnessModification(this Bitmap bitmap, int value)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height; y++)
                 {
                     Color initialColor = bitmap.GetPixel(x, y);
 
-                    int red = TruncateColorValue(initialColor.R + commandArgumentValue);
-                    int green = TruncateColorValue(initialColor.G + commandArgumentValue);
-                    int blue = TruncateColorValue(initialColor.B + commandArgumentValue);
+                    int red = TruncateColorValue(initialColor.R + value);
+                    int green = TruncateColorValue(initialColor.G + value);
+                    int blue = TruncateColorValue(initialColor.B + value);
 
                     Color color = Color.FromArgb(red, green, blue);
 
@@ -61,14 +28,12 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageContrastModification()
+        public static Bitmap ManageContrastModification(this Bitmap bitmap, int value)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
-            double contrast = Math.Pow((100.0 + commandArgumentValue) / 100.0, 2);
+            double contrast = Math.Pow((100.0 + value) / 100.0, 2);
 
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -91,13 +56,11 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageNegative()
+        public static Bitmap ManageNegative(this Bitmap bitmap)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height; y++)
@@ -114,13 +77,11 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageHorizontalFlip()
+        public static Bitmap ManageHorizontalFlip(this Bitmap bitmap)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
             for (int y = 0; y < bitmap.Height; y++)
             {
                 for (int x = 0; x < bitmap.Width / 2; x++)
@@ -133,13 +94,11 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageVerticalFlip()
+        public static Bitmap ManageVerticalFlip(this Bitmap bitmap)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height / 2; y++)
@@ -152,13 +111,11 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageDiagonalFlip()
+        public static Bitmap ManageDiagonalFlip(this Bitmap bitmap)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height / 2; y++)
@@ -171,20 +128,18 @@ namespace Image_processing.Managers
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            return bitmap;
         }
 
-        public void ManageImageShrinking()
+        public static Bitmap ManageImageShrinking(this Bitmap bitmap, double value)
         {
-            ManageImageEnlargement();
+            return null;
         }
 
-        public void ManageImageEnlargement()
+        public static Bitmap ManageImageEnlargement(this Bitmap bitmap, int value)
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
-            int newWidth = bitmap.Width * commandArgumentValue;
-            int newHeight = bitmap.Height * commandArgumentValue;
+            int newWidth = bitmap.Width * value;
+            int newHeight = bitmap.Height * value;
 
             Bitmap newBitmap = new Bitmap(newWidth, newHeight);
 
@@ -192,37 +147,37 @@ namespace Image_processing.Managers
             {
                 for (int y = 0; y < newHeight; y++)
                 {
-                    Color pixel = bitmap.GetPixel(x / commandArgumentValue, y / commandArgumentValue);
+                    Color pixel = bitmap.GetPixel(x / value, y / value);
                     newBitmap.SetPixel(x, y, pixel);
                 }
             }
 
-            bitmapManager.SaveBitmapFile(command.FileName, newBitmap);
+            return bitmap;
         }
 
-        public void ManageMidpointFilter()
+        public static void ManageMidpointFilter()
         {
             throw new NotImplementedException();
         }
 
-        public void ManageArithmeticMeanFilter()
+        public static void ManageArithmeticMeanFilter()
         {
             throw new NotImplementedException();
         }
 
-        public void ManageMeanSquareError()
+        public static void ManageMeanSquareError()
         {
             throw new NotImplementedException();
         }
 
-        public void ManagePeakMeanSquareError()
+        public static void ManagePeakMeanSquareError()
         {
             throw new NotImplementedException();
         }
         #endregion
 
         #region Task 1 private methods
-        private int TruncateColorValue(int colorValue)
+        private static int TruncateColorValue(int colorValue)
         {
             if (colorValue > 255)
             {
@@ -234,6 +189,11 @@ namespace Image_processing.Managers
             }
 
             return colorValue;
+        }
+
+        internal static Bitmap ManageNegative()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
