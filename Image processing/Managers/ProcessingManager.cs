@@ -1,7 +1,6 @@
 ﻿using Image_processing.Models;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 
 namespace Image_processing.Managers
 {
@@ -177,36 +176,28 @@ namespace Image_processing.Managers
 
         public void ManageImageShrinking()
         {
-            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
-            Bitmap shrunkBitmap = bitmapManager.LoadBitmapFile(command.FileName);
-
-            int shrunkWidth = bitmap.Width / 2;
-            int shrunkHeight = bitmap.Height / 2;
-
-            for (int x = 0; x < bitmap.Width; x++)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    int posX =
-                        (int)Math.Round((double)x / bitmap.Width / 2 * bitmap.Width);
-
-                    int posY =
-                        (int)Math.Round((double)y / bitmap.Height / 2 * bitmap.Height);
-
-                    posX = Math.Min(posX, bitmap.Width - 1);
-                    posY = Math.Min(posY, bitmap.Height - 1);
-
-                    Color pixel = bitmap.GetPixel(x, y);
-                    shrunkBitmap.SetPixel(posX, posY, pixel);
-                }
-            }
-
-            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
+            ManageImageEnlargement();
         }
 
         public void ManageImageEnlargement()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
+
+            int newWidth = bitmap.Width * commandArgumentValue;
+            int newHeight = bitmap.Height * commandArgumentValue;
+
+            Bitmap newBitmap = new Bitmap(newWidth, newHeight);
+
+            for (int x = 0; x < newWidth; x++)
+            {
+                for (int y = 0; y < newHeight; y++)
+                {
+                    Color pixel = bitmap.GetPixel(x / commandArgumentValue, y / commandArgumentValue);
+                    newBitmap.SetPixel(x, y, pixel);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, newBitmap);
         }
 
         public void ManageMidpointFilter()
