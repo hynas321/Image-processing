@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Image processing", "Image processing\Image processing.csproj", "{A476657B-72EA-4DE6-8F87-AF1AB7B300FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageProcessing", "Imageprocessing\ImageProcessing.csproj", "{A476657B-72EA-4DE6-8F87-AF1AB7B300FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47C50A0B-AA31-4878-AF19-17A1E30CACF5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
