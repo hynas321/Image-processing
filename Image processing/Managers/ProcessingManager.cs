@@ -1,6 +1,7 @@
 ﻿using Image_processing.Models;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace Image_processing.Managers
 {
@@ -43,7 +44,7 @@ namespace Image_processing.Managers
         #region Task 1
         public void ManageBrightnessModification()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -66,7 +67,7 @@ namespace Image_processing.Managers
 
         public void ManageContrastModification()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             double contrast = Math.Pow((100.0 + commandArgumentValue) / 100.0, 2);
 
@@ -96,7 +97,7 @@ namespace Image_processing.Managers
 
         public void ManageNegative()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -119,7 +120,7 @@ namespace Image_processing.Managers
 
         public void ManageHorizontalFlip()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             for (int y = 0; y < bitmap.Height; y++)
             {
@@ -138,7 +139,7 @@ namespace Image_processing.Managers
 
         public void ManageVerticalFlip()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -157,7 +158,7 @@ namespace Image_processing.Managers
 
         public void ManageDiagonalFlip()
         {
-            Bitmap bitmap = bitmapManager.ReadBitmapFile(command.FileName);
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
 
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -176,7 +177,31 @@ namespace Image_processing.Managers
 
         public void ManageImageShrinking()
         {
-            throw new NotImplementedException();
+            Bitmap bitmap = bitmapManager.LoadBitmapFile(command.FileName);
+            Bitmap shrunkBitmap = bitmapManager.LoadBitmapFile(command.FileName);
+
+            int shrunkWidth = bitmap.Width / 2;
+            int shrunkHeight = bitmap.Height / 2;
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    int posX =
+                        (int)Math.Round((double)x / bitmap.Width / 2 * bitmap.Width);
+
+                    int posY =
+                        (int)Math.Round((double)y / bitmap.Height / 2 * bitmap.Height);
+
+                    posX = Math.Min(posX, bitmap.Width - 1);
+                    posY = Math.Min(posY, bitmap.Height - 1);
+
+                    Color pixel = bitmap.GetPixel(x, y);
+                    shrunkBitmap.SetPixel(posX, posY, pixel);
+                }
+            }
+
+            bitmapManager.SaveBitmapFile(command.FileName, bitmap);
         }
 
         public void ManageImageEnlargement()

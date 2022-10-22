@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Xml.Linq;
 
 namespace Image_processing.Managers
 {
@@ -16,27 +17,35 @@ namespace Image_processing.Managers
             this.modifiedImagesFolderPath = modifiedImagesFolderPath;
         }
 
-        public Bitmap ReadBitmapFile(string filename)
+        public Bitmap LoadBitmapFile(string file)
         {
-            if (File.Exists($@"{originalImagesFolderPath}\{filename}") == false)
+            if (File.Exists($@"{originalImagesFolderPath}\{file}") == false)
             {
                 throw new FileNotFoundException(
-                    $"File {filename} does not exist in path {originalImagesFolderPath}"
+                    $"File {file} does not exist in path {originalImagesFolderPath}"
                 );
             }
 
-            return new Bitmap($@"{originalImagesFolderPath}\{filename}");
+            Image image = Image.FromFile($@"{originalImagesFolderPath}\{file}");
+            Bitmap bitmap = new Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            using (Graphics gfx = Graphics.FromImage(bitmap))
+            {
+                gfx.DrawImage(image, 0, 0);
+            }
+
+            return bitmap;
         }
 
-        public void SaveBitmapFile(string filename, Bitmap bitmap)
+        public void SaveBitmapFile(string file, Bitmap bitmap)
         {
             File.Copy(
-                $@"{originalImagesFolderPath}\{filename}",
-                $@"{modifiedImagesFolderPath}\{filename}",
+                $@"{originalImagesFolderPath}\{file}",
+                $@"{modifiedImagesFolderPath}\{file}",
                 true
             );
 
-            bitmap.Save($@"{modifiedImagesFolderPath}\{filename}");
+            bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
         }
     }
 }
