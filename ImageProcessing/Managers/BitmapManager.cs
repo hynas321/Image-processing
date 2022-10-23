@@ -39,13 +39,20 @@ namespace Image_processing.Managers
 
         public void SaveBitmapFile(string file, Bitmap bitmap)
         {
-            File.Copy(
-                $@"{originalImagesFolderPath}\{file}",
-                $@"{modifiedImagesFolderPath}\{file}",
-                true
-            );
+            try
+            {
+                File.Copy(
+                    $@"{originalImagesFolderPath}\{file}",
+                    $@"{modifiedImagesFolderPath}\{file}",
+                    true
+                );
 
-            bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
+                bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
+            }
+            catch
+            {
+                throw new FileNotFoundException($"File {file} could not be saved in {modifiedImagesFolderPath} location");
+            }
         }
     }
 }

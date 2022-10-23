@@ -8,6 +8,7 @@ namespace Image_processing
     public class Program
     {
         private static BitmapManager? bitmapManager;
+        private static ConsoleColor defaultConsoleColor = Console.ForegroundColor;
 
         static void Main(string[] args)
         {
@@ -18,28 +19,29 @@ namespace Image_processing
                 string originalImagesFolder = "OriginalImages";
                 string modifiedImagesFolder = "ModifiedImages";
 
-                string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+                string projectDirectory = Directory.GetParent(workingDirectory).FullName + "\\net6.0";
                 string originalImagesFolderPath = $@"{projectDirectory}\{originalImagesFolder}";
                 string modifiedImagesFolderPath = $@"{projectDirectory}\{modifiedImagesFolder}";
-
-                Console.WriteLine("Image processing app");
-                Console.WriteLine("All available commands with description are available under \"--help\" command");
-                Console.Write("Please enter the command with the following syntax\n");
-                Console.Write("filename --operation [-argument=value]\n");
 
                 bitmapManager = new BitmapManager(originalImagesFolderPath, modifiedImagesFolderPath);
 
                 if (args.Length == 0)
                 {
+                    DisplayHelpInformationMessage();
 
+                    Environment.Exit(0);
                 }
+
                 //--help
-                else if (args[0] == Operations.Help)
+                if (args[0] == Operations.Help)
                 {
                     ProcessingManager.DisplayHelpMessage();
+
+                    Environment.Exit(0);
                 }
+
                 //filename --operation
-                else if (args.Length == 2)
+                if (args.Length == 2)
                 {
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string operation = args[1];
@@ -61,6 +63,8 @@ namespace Image_processing
                     }
 
                     bitmapManager.SaveBitmapFile(args[0], bitmap);
+
+                    DisplayCommandExecutedSuccesfullyMessage(args);
                 }
                 //filename --operation value
                 else if (args.Length == 3)
@@ -86,6 +90,8 @@ namespace Image_processing
                     }
 
                     bitmapManager.SaveBitmapFile(args[0], bitmap);
+
+                    DisplayCommandExecutedSuccesfullyMessage(args);
                 }
                 else if (args.Length == 4)
                 {
@@ -93,17 +99,47 @@ namespace Image_processing
                 }
                 else
                 {
-
+                    DisplayIncorrectCommandMessage(args);
+                    DisplayHelpInformationMessage();
                 }
             }
             catch (FileNotFoundException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
+                Console.ForegroundColor = defaultConsoleColor;
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.ToString());
+                Console.ForegroundColor = defaultConsoleColor;
             }
+        }
+
+        public static void DisplayCommandExecutedSuccesfullyMessage(string[] args)
+        {
+            string command = string.Join(" ", args);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Command \"{command}\" has been executed successfully");
+            Console.ForegroundColor = defaultConsoleColor;
+        }
+
+        public static void DisplayIncorrectCommandMessage(string[] args)
+        {
+            string command = string.Join(" ", args);
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Incorrect command \"{command}\"");
+            Console.ForegroundColor = defaultConsoleColor;
+        }
+
+        public static void DisplayHelpInformationMessage()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Run program with \"--help\" parameter to see all available commands with description");
+            Console.ForegroundColor = defaultConsoleColor;
         }
     }
 }

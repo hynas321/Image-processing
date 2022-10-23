@@ -27,16 +27,31 @@
         #region E (analysis of obtained results)
         public const string MeanSquareError = "--mse";
         public const string PeakMeanSquareError = "--pmse";
+        public const string SignalToNoiseRatio = "--snr";
+        public const string PeakSignalToNoiseRatio = "--psnr";
+        public const string MaximumDifference = "--md";
         #endregion
         #endregion
 
-        public string[] OperationsArray { get; } =
+        public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
-            Help,
-            BrightnessModification, ContrastModification, Negative,
-            MeanSquareError, PeakMeanSquareError,
-            HorizontalFlip, VerticalFlip, DiagonalFlip, ImageShrinking, ImageEnlargement,
-            MidpointFilter, ArithmeticMeanFilter
+            {Help, "Displays all available commands with description"},
+            {$"filename {BrightnessModification} intValue", "Modifies image's brightness"},
+            {$"filename {ContrastModification} intValue", "Modifies image's contrast"},
+            {$"filename {Negative}", "Negates an image"},
+            {$"filename {HorizontalFlip}", "Flips an image horizontally"},
+            {$"filename {VerticalFlip}", "Flips an image vertically"},
+            {$"Filename {DiagonalFlip}", "Flips an image diagonally"},
+            {ImageShrinking, "Shrinks an image"},
+            {ImageEnlargement, "Enlarges an image"},
+            {MidpointFilter, ""},
+            {ArithmeticMeanFilter, ""},
+            {MeanSquareError, ""},
+            {PeakMeanSquareError, ""},
+            {SignalToNoiseRatio, ""},
+            {PeakSignalToNoiseRatio, ""},
+            {MaximumDifference, ""}
+
         };
     }
 }
