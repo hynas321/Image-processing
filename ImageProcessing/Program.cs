@@ -77,7 +77,7 @@ namespace Image_processing
                     DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 //filename --operation value
-                else if (args.Length == 3)
+                else if (args.Length == 3 && double.TryParse(args[2], out double result))
                 {
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string operation = args[1];
@@ -108,9 +108,46 @@ namespace Image_processing
 
                     DisplayCommandExecutedSuccesfullyMessage(command);
                 }
+                //filename filename --operation
+                else if (args.Length == 3)
+                {
+                    Bitmap bitmap1 = bitmapManager.LoadBitmapFile(args[0]);
+                    Bitmap bitmap2 = bitmapManager.LoadBitmapFile(args[1]);
+                    string operation = args[2];
+
+                    double resultToDisplay = 0;
+
+                    switch (operation)
+                    {
+                        case Operations.MeanSquareError:
+                            resultToDisplay = ProcessingManager.CalculateMeanSquareError(bitmap1, bitmap2);
+                            break;
+                        case Operations.PeakMeanSquareError:
+                            resultToDisplay = ProcessingManager.CalculatePeakMeanSquareError(bitmap1, bitmap2);
+                            break;
+                        case Operations.SignalToNoiseRatio:
+                            resultToDisplay = ProcessingManager.CalculateSignalToNoiseRatio(bitmap1, bitmap2);
+                            break;
+                        case Operations.PeakSignalToNoiseRatio:
+                            resultToDisplay = ProcessingManager.CalculatePeakSignalToNoiseRatio(bitmap1, bitmap2);
+                            break;
+                        case Operations.MaximumDifference:
+                            resultToDisplay = ProcessingManager.CalculateMaximumDifference(bitmap1, bitmap2);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Operation's \"{operation}\" result: {resultToDisplay}");
+                    Console.ForegroundColor = defaultConsoleColor;
+                }
                 else if (args.Length == 4)
                 {
-
+                    throw new CommandException("Command does not exist");
                 }
                 else
                 {

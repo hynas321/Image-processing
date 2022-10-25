@@ -196,7 +196,28 @@ namespace Image_processing.Managers
 
         public static Bitmap ManageMidpointFilter(this Bitmap bitmap)
         {
-            throw new NotImplementedException();
+            Bitmap maxFilteredBitmap = ManageMaxFilter(bitmap);
+            Bitmap minFilteredBitmap = ManageMinFilter(bitmap);
+            Bitmap midpointFilteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    Color maxPixel = maxFilteredBitmap.GetPixel(x, y);
+                    Color minPixel = minFilteredBitmap.GetPixel(x, y);
+
+                    int redColor = (int)(0.5 * (maxPixel.R + minPixel.R));
+                    int greenColor = (int)(0.5 * (maxPixel.G + minPixel.G));
+                    int blueColor = (int)(0.5 * (maxPixel.B + minPixel.B));
+
+                    Color midpointPixel = Color.FromArgb(redColor, greenColor, blueColor);
+
+                    midpointFilteredBitmap.SetPixel(x, y, midpointPixel);
+                }
+            }
+
+            return midpointFilteredBitmap;
         }
 
         public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap)
@@ -360,6 +381,40 @@ namespace Image_processing.Managers
         private static int ToRgb(this Color color)
         {
             return color.R + color.G + color.B;
+        }
+
+        public static Bitmap ManageMaxFilter(this Bitmap bitmap)
+        {
+            Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+
+            for (int x = 1; x < bitmap.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap.Height - 1; y++)
+                {
+                    Color filteredPixel = FilterPixelMaximum(bitmap, x, y);
+
+                    filteredBitmap.SetPixel(x, y, filteredPixel);
+                }
+            }
+
+            return filteredBitmap;
+        }
+
+        private static Bitmap ManageMinFilter(this Bitmap bitmap)
+        {
+            Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+
+            for (int x = 1; x < bitmap.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap.Height - 1; y++)
+                {
+                    Color filteredPixel = FilterPixelMinimum(bitmap, x, y);
+
+                    filteredBitmap.SetPixel(x, y, filteredPixel);
+                }
+            }
+
+            return filteredBitmap;
         }
 
         private static Color FilterPixelMinimum(this Bitmap bitmap, int x, int y)
