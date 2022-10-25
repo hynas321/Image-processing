@@ -1,6 +1,6 @@
-﻿using Image_processing.Managers;
+﻿using Image_processing.Exceptions;
+using Image_processing.Managers;
 using Image_processing.Records;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace Image_processing
@@ -15,13 +15,12 @@ namespace Image_processing
             try
             {
                 string workingDirectory = Environment.CurrentDirectory;
-
                 string originalImagesFolder = "OriginalImages";
                 string modifiedImagesFolder = "ModifiedImages";
-
                 string projectDirectory = Directory.GetParent(workingDirectory).FullName + "\\net6.0";
                 string originalImagesFolderPath = $@"{projectDirectory}\{originalImagesFolder}";
                 string modifiedImagesFolderPath = $@"{projectDirectory}\{modifiedImagesFolder}";
+                string command = string.Join(" ", args);
 
                 bitmapManager = new BitmapManager(originalImagesFolderPath, modifiedImagesFolderPath);
 
@@ -60,11 +59,22 @@ namespace Image_processing
                         case Operations.DiagonalFlip:
                             bitmap = bitmap.ManageDiagonalFlip();
                             break;
+                        case Operations.MidpointFilter:
+                            bitmap = bitmap.ManageMidpointFilter();
+                            break;
+                        case Operations.ArithmeticMeanFilter:
+                            bitmap = bitmap.ManageArithmeticMeanFilter();
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
                     }
 
                     bitmapManager.SaveBitmapFile(args[0], bitmap);
 
-                    DisplayCommandExecutedSuccesfullyMessage(args);
+                    DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 //filename --operation value
                 else if (args.Length == 3)
@@ -76,22 +86,27 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.BrightnessModification:
-                            bitmap = bitmap.ManageBrightnessModification((int) value);
+                            bitmap = bitmap.ManageBrightnessModification((int)value);
                             break;
                         case Operations.ContrastModification:
-                            bitmap = bitmap.ManageContrastModification((int) value);
+                            bitmap = bitmap.ManageContrastModification((int)value);
                             break;
                         case Operations.ImageShrinking:
                             bitmap = bitmap.ManageImageShrinking(value);
                             break;
                         case Operations.ImageEnlargement:
-                            bitmap = bitmap.ManageImageEnlargement((int) value);
+                            bitmap = bitmap.ManageImageEnlargement((int)value);
                             break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
                     }
 
                     bitmapManager.SaveBitmapFile(args[0], bitmap);
 
-                    DisplayCommandExecutedSuccesfullyMessage(args);
+                    DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 else if (args.Length == 4)
                 {
@@ -99,39 +114,33 @@ namespace Image_processing
                 }
                 else
                 {
-                    DisplayIncorrectCommandMessage(args);
-                    DisplayHelpInformationMessage();
+                    throw new CommandException(
+                        $"Command {command} is incorrect\n" +
+                        $"Run program with \"--help\" parameter to see all available commands with description"
+                    );
                 }
-            }
-            catch (FileNotFoundException ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ForegroundColor = defaultConsoleColor;
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.ToString());
-                Console.ForegroundColor = defaultConsoleColor;
+                if (ex is CommandException || ex is FileNotFoundException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                    Console.ForegroundColor = defaultConsoleColor;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.ToString());
+                    Console.ForegroundColor = defaultConsoleColor;
+                }
             }
         }
 
-        public static void DisplayCommandExecutedSuccesfullyMessage(string[] args)
+        public static void DisplayCommandExecutedSuccesfullyMessage(string command)
         {
-            string command = string.Join(" ", args);
-
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Command \"{command}\" has been executed successfully");
-            Console.ForegroundColor = defaultConsoleColor;
-        }
-
-        public static void DisplayIncorrectCommandMessage(string[] args)
-        {
-            string command = string.Join(" ", args);
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Incorrect command \"{command}\"");
             Console.ForegroundColor = defaultConsoleColor;
         }
 

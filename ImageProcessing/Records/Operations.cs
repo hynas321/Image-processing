@@ -41,16 +41,16 @@
             {$"filename {Negative}", "Negates an image"},
             {$"filename {HorizontalFlip}", "Flips an image horizontally"},
             {$"filename {VerticalFlip}", "Flips an image vertically"},
-            {$"Filename {DiagonalFlip}", "Flips an image diagonally"},
-            {ImageShrinking, "Shrinks an image"},
-            {ImageEnlargement, "Enlarges an image"},
-            {MidpointFilter, ""},
-            {ArithmeticMeanFilter, ""},
-            {MeanSquareError, ""},
-            {PeakMeanSquareError, ""},
-            {SignalToNoiseRatio, ""},
-            {PeakSignalToNoiseRatio, ""},
-            {MaximumDifference, ""}
+            {$"filename {DiagonalFlip}", "Flips an image diagonally"},
+            {$"filename {ImageShrinking} doubleValue", "Shrinks an image"},
+            {$"filename {ImageEnlargement} doubleValue", "Enlarges an image"},
+            {$"filename {MidpointFilter}", "Modifies image with the midpoint filter"},
+            {$"filename {ArithmeticMeanFilter}", "Modifies image with the arithmetic mean filter"},
+            {$"filename filename {MeanSquareError}", "Calculates mean square error"},
+            {$"filename filename {PeakMeanSquareError}", "Calculates peak mean square error"},
+            {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
+            {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
+            {$"filename filename {MaximumDifference}", "Calculates maximum difference"}
 
         };
     }
