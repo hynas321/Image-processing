@@ -169,9 +169,24 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public static Bitmap ManageImageShrinking(this Bitmap bitmap, double value)
+        public static Bitmap ManageImageShrinking(this Bitmap bitmap, int value)
         {
-            throw new NotImplementedException();
+            int shrunkWidth = bitmap.Width / value;
+            int shrunkHeight = bitmap.Height / value;
+
+            Bitmap enlargedBitmap = new Bitmap(shrunkWidth, shrunkHeight);
+
+            for (int x = 0; x < shrunkWidth; x++)
+            {
+                for (int y = 0; y < shrunkHeight; y++)
+                {
+                    Color pixel = bitmap.GetPixel(x * value, y * value);
+
+                    enlargedBitmap.SetPixel(x, y, pixel);
+                }
+            }
+
+            return enlargedBitmap;
         }
 
         public static Bitmap ManageImageEnlargement(this Bitmap bitmap, int value)
@@ -222,7 +237,18 @@ namespace Image_processing.Managers
 
         public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap)
         {
-            throw new NotImplementedException();
+            Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            double sum = 0;
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+
+                }
+            }
+
+            return null;
         }
 
         public static double CalculateMeanSquareError(Bitmap bitmap1, Bitmap bitmap2)
@@ -389,6 +415,7 @@ namespace Image_processing.Managers
 
             for (int x = 1; x < bitmap.Width - 1; x++)
             {
+                int var = 0;
                 for (int y = 1; y < bitmap.Height - 1; y++)
                 {
                     Color filteredPixel = FilterPixelMaximum(bitmap, x, y);
@@ -459,6 +486,7 @@ namespace Image_processing.Managers
                     }
                 }
             }
+
             return pixelMax;
         }
         #endregion

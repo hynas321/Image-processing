@@ -81,21 +81,21 @@ namespace Image_processing
                 {
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string operation = args[1];
-                    double value = int.Parse(args[2]);
+                    int value = int.Parse(args[2]);
 
                     switch (operation)
                     {
                         case Operations.BrightnessModification:
-                            bitmap = bitmap.ManageBrightnessModification((int)value);
+                            bitmap = bitmap.ManageBrightnessModification(value);
                             break;
                         case Operations.ContrastModification:
-                            bitmap = bitmap.ManageContrastModification((int)value);
+                            bitmap = bitmap.ManageContrastModification(value);
                             break;
                         case Operations.ImageShrinking:
                             bitmap = bitmap.ManageImageShrinking(value);
                             break;
                         case Operations.ImageEnlargement:
-                            bitmap = bitmap.ManageImageEnlargement((int)value);
+                            bitmap = bitmap.ManageImageEnlargement(value);
                             break;
                         default:
                             throw new CommandException(
