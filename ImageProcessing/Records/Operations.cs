@@ -27,16 +27,31 @@
         #region E (analysis of obtained results)
         public const string MeanSquareError = "--mse";
         public const string PeakMeanSquareError = "--pmse";
+        public const string SignalToNoiseRatio = "--snr";
+        public const string PeakSignalToNoiseRatio = "--psnr";
+        public const string MaximumDifference = "--md";
         #endregion
         #endregion
 
-        public string[] OperationsArray { get; } =
+        public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
-            Help,
-            BrightnessModification, ContrastModification, Negative,
-            MeanSquareError, PeakMeanSquareError,
-            HorizontalFlip, VerticalFlip, DiagonalFlip, ImageShrinking, ImageEnlargement,
-            MidpointFilter, ArithmeticMeanFilter
+            {Help, "Displays all available commands with description"},
+            {$"filename {BrightnessModification} intValue", "Modifies image's brightness"},
+            {$"filename {ContrastModification} intValue", "Modifies image's contrast"},
+            {$"filename {Negative}", "Negates an image"},
+            {$"filename {HorizontalFlip}", "Flips an image horizontally"},
+            {$"filename {VerticalFlip}", "Flips an image vertically"},
+            {$"filename {DiagonalFlip}", "Flips an image diagonally"},
+            {$"filename {ImageShrinking} doubleValue", "Shrinks an image"},
+            {$"filename {ImageEnlargement} doubleValue", "Enlarges an image"},
+            {$"filename {MidpointFilter}", "Modifies image with the midpoint filter"},
+            {$"filename {ArithmeticMeanFilter}", "Modifies image with the arithmetic mean filter"},
+            {$"filename filename {MeanSquareError}", "Calculates mean square error"},
+            {$"filename filename {PeakMeanSquareError}", "Calculates peak mean square error"},
+            {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
+            {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
+            {$"filename filename {MaximumDifference}", "Calculates maximum difference"}
+
         };
     }
 }
