@@ -1,6 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Xml.Linq;
 
 namespace Image_processing.Managers
 {
@@ -20,22 +18,34 @@ namespace Image_processing.Managers
 
         public Bitmap LoadBitmapFile(string file)
         {
-            if (File.Exists($@"{originalImagesFolderPath}\{file}") == false)
+            Bitmap bitmap;
+
+            if (File.Exists($@"{originalImagesFolderPath}\{file}") == true)
+            {
+                //bitmap = (Bitmap)Bitmap.FromFile($@"{originalImagesFolderPath}\{file}");
+                bitmap = new Bitmap(Image.FromFile($@"{originalImagesFolderPath}\{file}"));
+            }
+            else if (File.Exists($@"{modifiedImagesFolderPath}\{file}") == true)
+            {
+                bitmap = new Bitmap(Image.FromFile($@"{modifiedImagesFolderPath}\{file}"));
+            }
+            else
             {
                 throw new FileNotFoundException(
                     $"File {file} does not exist in path {originalImagesFolderPath}"
                 );
             }
 
-            Bitmap bitmap = (Bitmap)Bitmap.FromFile($@"{originalImagesFolderPath}\{file}");
-
             return bitmap;
         }
 
-        public void SaveBitmapFile(string file, Bitmap bitmap)
+        public void SaveBitmapFile(string file, Bitmap bitmap, string operation)
         {
             try
             {
+                string savedFile
+                    = $"{DateTime.Now.ToString("dd-MM-yy_HH-mm-ss")}_{operation.TrimStart('-')}_{file}";
+
                 File.Copy(
                     $@"{originalImagesFolderPath}\{file}",
                     $@"{modifiedImagesFolderPath}\{file}",
@@ -43,10 +53,13 @@ namespace Image_processing.Managers
                 );
 
                 bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
+
+                FileInfo fInfo = new FileInfo($@"{modifiedImagesFolderPath}\{file}");
+                fInfo.MoveTo($@"{modifiedImagesFolderPath}\{savedFile}");
             }
             catch
             {
-                throw new FileNotFoundException($"File {file} could not be saved in {modifiedImagesFolderPath} location");
+                throw new Exception($"File {file} could not be saved in location {modifiedImagesFolderPath}");
             }
         }
     }

@@ -8,7 +8,6 @@ namespace Image_processing
     public class Program
     {
         private static BitmapManager? bitmapManager;
-        private static ConsoleColor defaultConsoleColor = Console.ForegroundColor;
 
         static void Main(string[] args)
         {
@@ -26,7 +25,8 @@ namespace Image_processing
 
                 if (args.Length == 0)
                 {
-                    DisplayHelpInformationMessage();
+                    ConsoleManager.DisplayHelpInformationMessage();
+                    Console.ResetColor();
 
                     Environment.Exit(0);
                 }
@@ -34,7 +34,7 @@ namespace Image_processing
                 //--help
                 if (args[0] == Operations.Help)
                 {
-                    ProcessingManager.DisplayHelpMessage();
+                    ConsoleManager.DisplayHelpMessage();
 
                     Environment.Exit(0);
                 }
@@ -43,6 +43,7 @@ namespace Image_processing
                 if (args.Length == 2)
                 {
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
+                    string filename = args[0];
                     string operation = args[1];
 
                     switch (operation)
@@ -72,14 +73,15 @@ namespace Image_processing
                             );
                     }
 
-                    bitmapManager.SaveBitmapFile(args[0], bitmap);
+                    bitmapManager.SaveBitmapFile(args[0], bitmap, operation);
 
-                    DisplayCommandExecutedSuccesfullyMessage(command);
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command, modifiedImagesFolderPath);
                 }
                 //filename --operation value
                 else if (args.Length == 3 && double.TryParse(args[2], out double result))
                 {
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
+                    string filename = args[0];
                     string operation = args[1];
                     int value = int.Parse(args[2]);
 
@@ -104,9 +106,9 @@ namespace Image_processing
                             );
                     }
 
-                    bitmapManager.SaveBitmapFile(args[0], bitmap);
+                    bitmapManager.SaveBitmapFile(args[0], bitmap, operation);
 
-                    DisplayCommandExecutedSuccesfullyMessage(command);
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command, modifiedImagesFolderPath);
                 }
                 //filename filename --operation
                 else if (args.Length == 3)
@@ -141,9 +143,10 @@ namespace Image_processing
                             );
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Operation's \"{operation}\" result: {resultToDisplay}");
-                    Console.ForegroundColor = defaultConsoleColor;
+                    ConsoleManager.WriteLineWithForegroundColor(
+                        $"Operation's \"{operation}\" result: {resultToDisplay}",
+                        ConsoleColor.Green
+                    );
                 }
                 else if (args.Length == 4)
                 {
@@ -161,31 +164,15 @@ namespace Image_processing
             {
                 if (ex is CommandException || ex is FileNotFoundException)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ForegroundColor = defaultConsoleColor;
+                    ConsoleManager.WriteLineWithForegroundColor(ex.Message, ConsoleColor.Red);
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.ToString());
-                    Console.ForegroundColor = defaultConsoleColor;
+                    ConsoleManager.WriteLineWithForegroundColor(ex.ToString(), ConsoleColor.Red);
                 }
             }
-        }
 
-        public static void DisplayCommandExecutedSuccesfullyMessage(string command)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Command \"{command}\" has been executed successfully");
-            Console.ForegroundColor = defaultConsoleColor;
-        }
-
-        public static void DisplayHelpInformationMessage()
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Run program with \"--help\" parameter to see all available commands with description");
-            Console.ForegroundColor = defaultConsoleColor;
+            Console.ResetColor();
         }
     }
 }

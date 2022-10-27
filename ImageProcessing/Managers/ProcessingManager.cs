@@ -5,49 +5,6 @@ namespace Image_processing.Managers
 {
     public static class ProcessingManager
     {
-        public static void DisplayHelpMessage()
-        {
-            Dictionary<string, string> operationDictionary = Operations.OperationsDictionary;
-            ConsoleColor defaultConsoleColor = Console.ForegroundColor;
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("***IMAGE PROCESSING APPLICATION***");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("In order to process an image, one should input parameters when running an application.");
-            Console.WriteLine("Parameters have to be given in the correct order.");
-            Console.WriteLine("The image has to be placed in the \"OriginalImages\" folder in exe file's location.");
-            Console.WriteLine("The processed image is created in the \"ModifiedImages\" folder in exe file's location.");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("PARAMETERS");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("filename ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("image file present in \"OriginalImages\" folder (example: lena.bmp)");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("--(operation name) ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("type of image processing operation (example: --brightness)");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("intValue ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("numeric value with the range specified in the command's description (example: 15)");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("doubleValue ");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("floating point numeric value with the range specified in the command's description (example: 15.5)");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("COMMANDS");
-
-            foreach (KeyValuePair<string, string> elem in operationDictionary)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write($"{elem.Key} ");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{elem.Value}\n");
-                Console.ForegroundColor = defaultConsoleColor;
-            }
-        }
-
         #region Task 1
         public static Bitmap ManageBrightnessModification(this Bitmap bitmap, int value)
         {
@@ -237,18 +194,7 @@ namespace Image_processing.Managers
 
         public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap)
         {
-            Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            double sum = 0;
-
-            for (int x = 0; x < bitmap.Width; x++)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-
-                }
-            }
-
-            return null;
+            throw new NotImplementedException("Operation --amean is not implemented");
         }
 
         public static double CalculateMeanSquareError(Bitmap bitmap1, Bitmap bitmap2)
