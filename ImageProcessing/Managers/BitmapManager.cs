@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Xml.Linq;
 
 namespace Image_processing.Managers
@@ -26,13 +27,7 @@ namespace Image_processing.Managers
                 );
             }
 
-            Image image = Image.FromFile($@"{originalImagesFolderPath}\{file}");
-            Bitmap bitmap = new Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(image, 0, 0);
-            }
+            Bitmap bitmap = (Bitmap)Bitmap.FromFile($@"{originalImagesFolderPath}\{file}");
 
             return bitmap;
         }

@@ -415,7 +415,6 @@ namespace Image_processing.Managers
 
             for (int x = 1; x < bitmap.Width - 1; x++)
             {
-                int var = 0;
                 for (int y = 1; y < bitmap.Height - 1; y++)
                 {
                     Color filteredPixel = FilterPixelMaximum(bitmap, x, y);
@@ -427,7 +426,7 @@ namespace Image_processing.Managers
             return filteredBitmap;
         }
 
-        private static Bitmap ManageMinFilter(this Bitmap bitmap)
+        public static Bitmap ManageMinFilter(this Bitmap bitmap)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
@@ -478,7 +477,7 @@ namespace Image_processing.Managers
                     Color pixel = bitmap.GetPixel(a, b);
 
                     int pixelRGB = pixel.ToRgb();
-                    int pixelMaxRGB = pixel.ToRgb();
+                    int pixelMaxRGB = pixelMax.ToRgb();
 
                     if (pixelRGB > pixelMaxRGB)
                     {
