@@ -1,5 +1,4 @@
-﻿using Image_processing.Records;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Image_processing.Managers
 {
@@ -194,7 +193,19 @@ namespace Image_processing.Managers
 
         public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap)
         {
-            throw new NotImplementedException("Operation --amean is not implemented");
+            Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+
+            for (int y = 1; y < bitmap.Height - 1; y++)
+            {
+                for (int x = 1; x < bitmap.Width - 1; x++)
+                {
+                    Color filteredPixel = GetMeanColor(bitmap, x, y);
+
+                    filteredBitmap.SetPixel(x, y, filteredPixel);
+                }
+            }
+
+            return filteredBitmap;
         }
 
         public static double CalculateMeanSquareError(Bitmap bitmap1, Bitmap bitmap2)
@@ -433,6 +444,28 @@ namespace Image_processing.Managers
             }
 
             return pixelMax;
+        }
+
+        private static Color GetMeanColor(Bitmap bitmap, int x, int y)
+        {
+            double redColorSum = 0;
+            double greenColorSum = 0;
+            double blueColorSum = 0;
+
+            int height = 3;
+            int width = 3;
+
+            for (int a = x - 1; a <= x + 1; a++)
+            {
+                for (int b = y - 1; b <= y + 1; b++)
+                {
+                    redColorSum += TruncateColorValue(bitmap.GetPixel(x, y).R / (height * width));
+                    greenColorSum += TruncateColorValue(bitmap.GetPixel(x, y).G / (height * width));
+                    blueColorSum += TruncateColorValue(bitmap.GetPixel(x, y).B / (height * width));
+                }
+            }
+
+            return Color.FromArgb((int)redColorSum, (int)greenColorSum, (int)blueColorSum);
         }
         #endregion
     }
