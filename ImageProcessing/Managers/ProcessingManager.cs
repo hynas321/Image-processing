@@ -80,11 +80,11 @@ namespace Image_processing.Managers
             {
                 for (int x = 0; x < bitmap.Width / 2; x++)
                 {
-                    Color rightSidePixel = bitmap.GetPixel(bitmap.Width - 1 - x, y); 
-                    Color leftSidePixel = bitmap.GetPixel(x, y); 
+                    Color pixel1 = bitmap.GetPixel(bitmap.Width - 1 - x, y); 
+                    Color pixel2 = bitmap.GetPixel(x, y); 
                                                                                        
-                    bitmap.SetPixel(bitmap.Width - 1 - x, y, leftSidePixel);
-                    bitmap.SetPixel(x, y, rightSidePixel);
+                    bitmap.SetPixel(bitmap.Width - 1 - x, y, pixel2);
+                    bitmap.SetPixel(x, y, pixel1);
                 }
             }
 
@@ -97,11 +97,11 @@ namespace Image_processing.Managers
             {
                 for (int y = 0; y < bitmap.Height / 2; y++)
                 {
-                    Color rightSidePixel = bitmap.GetPixel(x, bitmap.Height - 1 - y);
-                    Color leftSidePixel = bitmap.GetPixel(x, y);
+                    Color pixel1 = bitmap.GetPixel(x, bitmap.Height - 1 - y);
+                    Color pixel2 = bitmap.GetPixel(x, y);
 
-                    bitmap.SetPixel(x, bitmap.Height - 1 - y, leftSidePixel);
-                    bitmap.SetPixel(x, y, rightSidePixel);
+                    bitmap.SetPixel(x, bitmap.Height - 1 - y, pixel2);
+                    bitmap.SetPixel(x, y, pixel1);
                 }
             }
 
@@ -114,11 +114,11 @@ namespace Image_processing.Managers
             {
                 for (int y = 0; y < bitmap.Height / 2; y++)
                 {
-                    Color rightSidePixel = bitmap.GetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y);
-                    Color leftSidePixel = bitmap.GetPixel(x, y);
+                    Color pixel1 = bitmap.GetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y);
+                    Color pixel2 = bitmap.GetPixel(x, y);
 
-                    bitmap.SetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y, leftSidePixel);
-                    bitmap.SetPixel(x, y, rightSidePixel);
+                    bitmap.SetPixel(bitmap.Width - 1 - x, bitmap.Height - 1 - y, pixel2);
+                    bitmap.SetPixel(x, y, pixel1);
                 }
             }
 
@@ -257,7 +257,7 @@ namespace Image_processing.Managers
                 }
             }
 
-            return maxValue / (bitmap1.Height * bitmap2.Width * maxValue);
+            return value / (bitmap1.Height * bitmap2.Width * maxValue);
         }
 
         public static double CalculateSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
@@ -272,16 +272,15 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(x, y);
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
-                    double redColorDifference = pixel1.R - pixel2.R;
-                    double greenColorDifference = pixel1.G - pixel2.G;
-                    double blueColorDifference = pixel1.B - pixel2.B;
-
-                    signal += Math.Pow(pixel1.ToRgb(), 2);
+                    signal += 
+                        Math.Pow(pixel1.R, 2) +
+                        Math.Pow(pixel1.G, 2) +
+                        Math.Pow(pixel1.B, 2);
 
                     noise +=
-                        Math.Pow(redColorDifference, 2) +
-                        Math.Pow(greenColorDifference, 2) +
-                        Math.Pow(blueColorDifference, 2);
+                        Math.Pow(pixel1.R - pixel2.R, 2) +
+                        Math.Pow(pixel1.G - pixel2.G, 2) +
+                        Math.Pow(pixel1.B - pixel2.B, 2);
                 }
             }
             return 10 * Math.Log10(signal / noise);
@@ -299,23 +298,19 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(x, y);
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
-                    double redColorDifference = pixel1.R - pixel2.R;
-                    double greenColorDifference = pixel1.G - pixel2.G;
-                    double blueColorDifference = pixel1.B - pixel2.B;
-
                     if (pixel1.ToRgb() > signal)
                     {
                         signal = pixel1.ToRgb();
                     }
 
                     noise +=
-                        Math.Pow(redColorDifference, 2) +
-                        Math.Pow(greenColorDifference, 2) +
-                        Math.Pow(blueColorDifference, 2);
+                        Math.Pow(pixel1.R - pixel2.R, 2) +
+                        Math.Pow(pixel1.G - pixel2.G, 2) +
+                        Math.Pow(pixel1.B - pixel2.B, 2);
                 }
             }
 
-            return 10 * Math.Log10((bitmap1.Width * bitmap1.Width * Math.Pow(signal, 2)) / noise);
+            return 10 * Math.Log10(Math.Pow(signal,2) / noise);
         }
 
         public static double CalculateMaximumDifference(Bitmap bitmap1, Bitmap bitmap2)
