@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Microsoft.VisualBasic;
+using System.Drawing;
 
 namespace Image_processing.Managers
 {
@@ -165,10 +166,10 @@ namespace Image_processing.Managers
             return enlargedBitmap;
         }
 
-        public static Bitmap ManageMidpointFilter(this Bitmap bitmap)
+        public static Bitmap ManageMidpointFilter(this Bitmap bitmap, int scope)
         {
-            Bitmap maxFilteredBitmap = ManageMaxFilter(bitmap);
-            Bitmap minFilteredBitmap = ManageMinFilter(bitmap);
+            Bitmap maxFilteredBitmap = ManageMaxFilter(bitmap, scope);
+            Bitmap minFilteredBitmap = ManageMinFilter(bitmap, scope);
             Bitmap midpointFilteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
             for (int x = 0; x < bitmap.Width; x++)
@@ -191,15 +192,15 @@ namespace Image_processing.Managers
             return midpointFilteredBitmap;
         }
 
-        public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap)
+        public static Bitmap ManageArithmeticMeanFilter(this Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
-            for (int y = 1; y < bitmap.Height - 1; y++)
+            for (int y = scope; y < bitmap.Height - scope; y++)
             {
-                for (int x = 1; x < bitmap.Width - 1; x++)
+                for (int x = scope; x < bitmap.Width - scope; x++)
                 {
-                    Color filteredPixel = GetMeanColor(bitmap, x, y);
+                    Color filteredPixel = GetArithmeticMeanPixel(bitmap, x, y, scope);
 
                     filteredBitmap.SetPixel(x, y, filteredPixel);
                 }
@@ -361,15 +362,15 @@ namespace Image_processing.Managers
             return color.R + color.G + color.B;
         }
 
-        public static Bitmap ManageMaxFilter(this Bitmap bitmap)
+        public static Bitmap ManageMaxFilter(this Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
-            for (int x = 1; x < bitmap.Width - 1; x++)
+            for (int x = scope; x < bitmap.Width - scope; x++)
             {
-                for (int y = 1; y < bitmap.Height - 1; y++)
+                for (int y = scope; y < bitmap.Height - scope; y++)
                 {
-                    Color filteredPixel = FilterPixelMaximum(bitmap, x, y);
+                    Color filteredPixel = FilterPixelMaximum(bitmap, x, y, scope);
 
                     filteredBitmap.SetPixel(x, y, filteredPixel);
                 }
@@ -378,15 +379,15 @@ namespace Image_processing.Managers
             return filteredBitmap;
         }
 
-        public static Bitmap ManageMinFilter(this Bitmap bitmap)
+        public static Bitmap ManageMinFilter(this Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
-            for (int x = 1; x < bitmap.Width - 1; x++)
+            for (int x = scope; x < bitmap.Width - scope; x++)
             {
-                for (int y = 1; y < bitmap.Height - 1; y++)
+                for (int y = scope; y < bitmap.Height - scope; y++)
                 {
-                    Color filteredPixel = FilterPixelMinimum(bitmap, x, y);
+                    Color filteredPixel = FilterPixelMinimum(bitmap, x, y, scope);
 
                     filteredBitmap.SetPixel(x, y, filteredPixel);
                 }
@@ -395,13 +396,13 @@ namespace Image_processing.Managers
             return filteredBitmap;
         }
 
-        private static Color FilterPixelMinimum(this Bitmap bitmap, int x, int y)
+        private static Color FilterPixelMinimum(this Bitmap bitmap, int x, int y, int scope)
         {
             Color pixelMin = bitmap.GetPixel(x, y);
 
-            for (int a = x - 1; a <= x + 1; a++)
+            for (int a = x - scope; a <= x + scope; a++)
             {
-                for (int b = y - 1; b <= y + 1; b++)
+                for (int b = y - scope; b <= y + scope; b++)
                 {
                     Color pixel = bitmap.GetPixel(a, b);
 
@@ -418,13 +419,13 @@ namespace Image_processing.Managers
             return pixelMin;
         }
 
-        private static Color FilterPixelMaximum(this Bitmap bitmap, int x, int y)
+        private static Color FilterPixelMaximum(this Bitmap bitmap, int x, int y, int scope)
         {
             Color pixelMax = bitmap.GetPixel(x, y);
 
-            for (int a = x - 1; a <= x + 1; a++)
+            for (int a = x - scope; a <= x + scope; a++)
             {
-                for (int b = y - 1; b <= y + 1; b++)
+                for (int b = y - scope; b <= y + scope; b++)
                 {
                     Color pixel = bitmap.GetPixel(a, b);
 
@@ -441,26 +442,33 @@ namespace Image_processing.Managers
             return pixelMax;
         }
 
-        private static Color GetMeanColor(Bitmap bitmap, int x, int y)
+        private static Color GetArithmeticMeanPixel(Bitmap bitmap, int x, int y, int scope)
         {
-            double redColorSum = 0;
-            double greenColorSum = 0;
-            double blueColorSum = 0;
+            int redValueSum = 0;
+            int greenValueSum = 0;
+            int blueValueSum = 0;
 
-            int height = 3;
-            int width = 3;
+            int iteration = 0;
 
-            for (int a = x - 1; a <= x + 1; a++)
+            for (int a = y - scope; a < y + scope; a++)
             {
-                for (int b = y - 1; b <= y + 1; b++)
+                for (int b = x - scope; b < x + scope; b++)
                 {
-                    redColorSum += TruncateColorValue(bitmap.GetPixel(x, y).R / (height * width));
-                    greenColorSum += TruncateColorValue(bitmap.GetPixel(x, y).G / (height * width));
-                    blueColorSum += TruncateColorValue(bitmap.GetPixel(x, y).B / (height * width));
+                    Color pixel = bitmap.GetPixel(b, a);
+
+                    redValueSum += pixel.R;
+                    greenValueSum += pixel.G;
+                    blueValueSum += pixel.B;
+
+                    iteration++;
                 }
             }
 
-            return Color.FromArgb((int)redColorSum, (int)greenColorSum, (int)blueColorSum);
+            return Color.FromArgb(
+                redValueSum / iteration,
+                greenValueSum / iteration,
+                blueValueSum / iteration
+            );
         }
         #endregion
     }

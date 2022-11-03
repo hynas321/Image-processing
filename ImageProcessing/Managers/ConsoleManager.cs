@@ -52,7 +52,7 @@ namespace Image_processing.Managers
             WriteWithForegroundColor("--(operation name) ", ConsoleColor.Yellow);
             WriteLineWithForegroundColor("type of the image processing operation (example: --brightness)", ConsoleColor.White);
             WriteWithForegroundColor("intValue ", ConsoleColor.Yellow);
-            WriteLineWithForegroundColor("numeric value with the range specified in the command's description (example: 15)", ConsoleColor.White);
+            WriteLineWithForegroundColor("numeric value (example: 15)", ConsoleColor.White);
             WriteLineWithForegroundColor("COMMANDS", ConsoleColor.Cyan);
 
             foreach (KeyValuePair<string, string> elem in operationDictionary)

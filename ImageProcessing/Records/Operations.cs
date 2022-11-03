@@ -36,22 +36,21 @@
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
-            {$"filename {BrightnessModification} intValue", "Modifies image's brightness"},
-            {$"filename {ContrastModification} intValue", "Modifies image's contrast"},
+            {$"filename {BrightnessModification} intValue", "Modifies image's brightness by the given value"},
+            {$"filename {ContrastModification} intValue", "Modifies image's contrast by the given value"},
             {$"filename {Negative}", "Negates an image"},
             {$"filename {HorizontalFlip}", "Flips an image horizontally"},
             {$"filename {VerticalFlip}", "Flips an image vertically"},
             {$"filename {DiagonalFlip}", "Flips an image diagonally"},
-            {$"filename {ImageShrinking} doubleValue", "Shrinks an image"},
-            {$"filename {ImageEnlargement} doubleValue", "Enlarges an image"},
-            {$"filename {MidpointFilter}", "Modifies image with the midpoint filter"},
-            {$"filename {ArithmeticMeanFilter}", "Modifies image with the arithmetic mean filter"},
+            {$"filename {ImageShrinking} intValue", "Shrinks an image x times"},
+            {$"filename {ImageEnlargement} intValue", "Enlarges an image x times"},
+            {$"filename {MidpointFilter} intValue", "Modifies image with the midpoint filter with scope equal to the given value"},
+            {$"filename {ArithmeticMeanFilter} intValue", "Modifies image with the arithmetic mean filter with scope equal to the given value"},
             {$"filename filename {MeanSquareError}", "Calculates mean square error"},
             {$"filename filename {PeakMeanSquareError}", "Calculates peak mean square error"},
             {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"}
-
         };
     }
 }
