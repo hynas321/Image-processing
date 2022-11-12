@@ -60,12 +60,6 @@ namespace Image_processing
                         case Operations.DiagonalFlip:
                             bitmap = bitmap.ManageDiagonalFlip();
                             break;
-                        case Operations.MidpointFilter:
-                            bitmap = bitmap.ManageMidpointFilter();
-                            break;
-                        case Operations.ArithmeticMeanFilter:
-                            bitmap = bitmap.ManageArithmeticMeanFilter();
-                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -98,6 +92,12 @@ namespace Image_processing
                             break;
                         case Operations.ImageEnlargement:
                             bitmap = bitmap.ManageImageEnlargement(value);
+                            break;
+                        case Operations.MidpointFilter:
+                            bitmap = bitmap.ManageMidpointFilter(value);
+                            break;
+                        case Operations.ArithmeticMeanFilter:
+                            bitmap = bitmap.ManageArithmeticMeanFilter(value);
                             break;
                         default:
                             throw new CommandException(
