@@ -1,27 +1,33 @@
 ﻿using Image_processing.Exceptions;
 using Image_processing.Managers;
 using Image_processing.Records;
+using ScottPlot;
 using System.Drawing;
 
 namespace Image_processing
 {
     public class Program
     {
-        private static BitmapManager? bitmapManager;
+        private static FileManager? fileManager;
 
         static void Main(string[] args)
         {
             try
             {
-                string workingDirectory = Environment.CurrentDirectory;
                 string originalImagesFolder = "OriginalImages";
                 string modifiedImagesFolder = "ModifiedImages";
-                string projectDirectory = Directory.GetParent(workingDirectory).FullName + "\\net6.0";
+                string plotImagesFolder = "PlotImages";
+                string projectDirectory = Environment.CurrentDirectory;
                 string originalImagesFolderPath = $@"{projectDirectory}\{originalImagesFolder}";
                 string modifiedImagesFolderPath = $@"{projectDirectory}\{modifiedImagesFolder}";
+                string plotImagesFolderPath = $@"{projectDirectory}\{plotImagesFolder}";
                 string command = string.Join(" ", args);
 
-                bitmapManager = new BitmapManager(originalImagesFolderPath, modifiedImagesFolderPath);
+                fileManager = new FileManager(
+                    originalImagesFolderPath,
+                    modifiedImagesFolderPath,
+                    plotImagesFolderPath
+                );
 
                 if (args.Length == 0)
                 {
@@ -40,11 +46,12 @@ namespace Image_processing
                 }
 
                 //filename --operation
-                if (args.Length == 2)
+                if (args.Length == 2 && args[1].StartsWith("--"))
                 {
-                    Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string filename = args[0];
                     string operation = args[1];
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
 
                     switch (operation)
                     {
@@ -67,17 +74,18 @@ namespace Image_processing
                             );
                     }
 
-                    bitmapManager.SaveBitmapFile(args[0], bitmap, operation);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
 
-                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command, modifiedImagesFolderPath);
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 //filename --operation value
                 else if (args.Length == 3 && double.TryParse(args[2], out double result))
                 {
-                    Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string filename = args[0];
                     string operation = args[1];
                     int value = int.Parse(args[2]);
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
 
                     switch (operation)
                     {
@@ -106,16 +114,19 @@ namespace Image_processing
                             );
                     }
 
-                    bitmapManager.SaveBitmapFile(args[0], bitmap, operation);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
 
-                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command, modifiedImagesFolderPath);
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 //filename filename --operation
-                else if (args.Length == 3)
+                else if (args.Length == 3 && args[2].StartsWith("--"))
                 {
-                    Bitmap bitmap1 = bitmapManager.LoadBitmapFile(args[0]);
-                    Bitmap bitmap2 = bitmapManager.LoadBitmapFile(args[1]);
+                    string filename1 = args[0];
+                    string filename2 = args[1];
                     string operation = args[2];
+
+                    Bitmap bitmap1 = fileManager.LoadBitmapFile(filename1);
+                    Bitmap bitmap2 = fileManager.LoadBitmapFile(filename2);
 
                     double resultToDisplay = 0;
 
@@ -148,9 +159,31 @@ namespace Image_processing
                         ConsoleColor.Green
                     );
                 }
-                else if (args.Length == 4)
+                //filename --operation char
+                else if (args.Length == 3)
                 {
-                    throw new CommandException("Command does not exist");
+                    string filename = args[0];
+                    string operation = args[1];
+                    char color = char.Parse(args[2]);
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+                    Plot plot;
+
+                    switch (operation)
+                    {
+                        case Operations.Histogram:
+                            plot = ProcessingManager.ManageHistogram(bitmap, color);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveHistogram(filename, plot, color);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 else
                 {

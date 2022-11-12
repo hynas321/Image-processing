@@ -33,6 +33,31 @@
         #endregion
         #endregion
 
+        #region Task 2
+        public const string Histogram = "--histogram";
+
+        #region H (histogram calculation algorithm)
+        public const string RaleighFinalProbabilityDensityFunction = "--hraleigh";
+        #endregion
+
+        #region C (image characteristics)
+        public const string Mean = "--cmean";
+        public const string Variance = "--cvariance";
+        public const string StandardDeviation = "--cstdev";
+        public const string VariationCoefficientI = "--cvarcoi";
+        public const string VariationCoefficientII = "--cvarcoii";
+        public const string InformationSourceEntropy = "--centropy";
+        #endregion
+
+        #region S (linear image filtration algorithm in spatial domain basing on convolution)
+        public const string ExtractionOfDetailsI = "--sexdeti";
+        #endregion
+
+        #region O (non-linear image filtration algorithm in spatial domain)
+        public const string RosenfeldOperator = "--orosenfeld";
+        #endregion
+        #endregion
+
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
@@ -50,7 +75,16 @@
             {$"filename filename {PeakMeanSquareError}", "Calculates peak mean square error"},
             {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
-            {$"filename filename {MaximumDifference}", "Calculates maximum difference"}
+            {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
+            {$"filename {Histogram} charValue (R, G or B)", ""},
+            {$"{Mean}", ""},
+            {$"{Variance}", ""},
+            {$"{StandardDeviation}", ""},
+            {$"{VariationCoefficientI}", ""},
+            {$"{VariationCoefficientII}", ""},
+            {$"{InformationSourceEntropy}", ""},
+            {$"{ExtractionOfDetailsI}", ""},
+            {$"{RosenfeldOperator}", ""}
         };
     }
 }

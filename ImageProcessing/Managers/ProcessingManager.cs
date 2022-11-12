@@ -1,5 +1,8 @@
-﻿using Microsoft.VisualBasic;
+﻿using ScottPlot;
+using ScottPlot.Drawing;
+using ScottPlot.Plottable;
 using System.Drawing;
+using System.Drawing.Text;
 
 namespace Image_processing.Managers
 {
@@ -470,6 +473,43 @@ namespace Image_processing.Managers
                 blueValueSum / iteration
             );
         }
+        #endregion
+
+        #region Task 2
+        public static Plot ManageHistogram(this Bitmap bitmap, char color)
+        {
+            double[] colorValues = new double[256];
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Color pixel = bitmap.GetPixel(x, y);
+
+                    switch (color)
+                    {
+                        case 'R':
+                            colorValues[pixel.R] += 1;
+                            break;
+                        case 'G':
+                            colorValues[pixel.G] += 1;
+                            break;
+                        case 'B':
+                            colorValues[pixel.B] += 1;
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+            }
+
+            return PlotManager.CreatePlot(colorValues, color);
+        }
+        #endregion
+
+        #region Task 2 private methods
+
         #endregion
     }
 }

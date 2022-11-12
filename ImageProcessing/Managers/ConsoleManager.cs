@@ -18,7 +18,7 @@ namespace Image_processing.Managers
             Console.ResetColor();
         }
 
-        public static void DisplayCommandExecutedSuccesfullyMessage(string command, string locationPath)
+        public static void DisplayCommandExecutedSuccesfullyMessage(string command)
         {
             ConsoleManager.WriteLineWithForegroundColor(
                 $"Command \"{command}\" has been executed successfully.",

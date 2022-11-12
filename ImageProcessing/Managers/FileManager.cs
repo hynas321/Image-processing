@@ -1,19 +1,23 @@
-﻿using System.Drawing;
+﻿using ScottPlot;
+using System.Drawing;
 
 namespace Image_processing.Managers
 {
-    public class BitmapManager
+    public class FileManager
     {
         private string originalImagesFolderPath;
         private string modifiedImagesFolderPath;
+        private string imagePlotsFolderPath;
 
-        public BitmapManager(
+        public FileManager(
             string originalImagesFolderPath,
-            string modifiedImagesFolderPath
+            string modifiedImagesFolderPath,
+            string imagePlotsFolderPath
         )
         {
             this.originalImagesFolderPath = originalImagesFolderPath;
             this.modifiedImagesFolderPath = modifiedImagesFolderPath;
+            this.imagePlotsFolderPath = imagePlotsFolderPath;
         }
 
         public Bitmap LoadBitmapFile(string file)
@@ -22,7 +26,6 @@ namespace Image_processing.Managers
 
             if (File.Exists($@"{originalImagesFolderPath}\{file}") == true)
             {
-                //bitmap = (Bitmap)Bitmap.FromFile($@"{originalImagesFolderPath}\{file}");
                 bitmap = new Bitmap(Image.FromFile($@"{originalImagesFolderPath}\{file}"));
             }
             else if (File.Exists($@"{modifiedImagesFolderPath}\{file}") == true)
@@ -44,7 +47,7 @@ namespace Image_processing.Managers
             try
             {
                 string savedFile
-                    = $"{DateTime.Now.ToString("dd-MM-yy_HH-mm-ss")}_{operation.TrimStart('-')}_{file}";
+                    = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_{file}";
 
                 File.Copy(
                     $@"{originalImagesFolderPath}\{file}",
@@ -60,6 +63,39 @@ namespace Image_processing.Managers
             catch
             {
                 throw new Exception($"File {file} could not be saved in location {modifiedImagesFolderPath}");
+            }
+        }
+
+        public void SaveHistogram(string file, Plot plot, char color)
+        {
+            try
+            {
+                string colorName;
+
+                switch (color)
+                {
+                    case 'R':
+                        colorName = "red_color";
+                        break;
+                    case 'G':
+                        colorName = "green_color";
+                        break;
+                    case 'B':
+                        colorName = "blue_color";
+                        break;
+                    default:
+                        colorName = "no_color";
+                        break;
+                }
+
+                string savedFile
+                    = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{colorName}_histogram_{file}";
+
+                plot.SaveFig($@"{imagePlotsFolderPath}\{savedFile}");
+            }
+            catch
+            {
+                throw new Exception($"File {file} could not be saved in location {imagePlotsFolderPath}");
             }
         }
     }
