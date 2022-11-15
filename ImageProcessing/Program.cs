@@ -77,27 +77,27 @@ namespace Image_processing
                     Bitmap bitmap = bitmapManager.LoadBitmapFile(args[0]);
                     string filename = args[0];
                     string operation = args[1];
-                    int value = int.Parse(args[2]);
+                    double value = double.Parse(args[2]);
 
                     switch (operation)
                     {
                         case Operations.BrightnessModification:
-                            bitmap = bitmap.ManageBrightnessModification(value);
+                            bitmap = bitmap.ManageBrightnessModification((int)value);
                             break;
                         case Operations.ContrastModification:
                             bitmap = bitmap.ManageContrastModification(value);
                             break;
                         case Operations.ImageShrinking:
-                            bitmap = bitmap.ManageImageShrinking(value);
+                            bitmap = bitmap.ManageImageShrinking((int)value);
                             break;
                         case Operations.ImageEnlargement:
-                            bitmap = bitmap.ManageImageEnlargement(value);
+                            bitmap = bitmap.ManageImageEnlargement((int)value);
                             break;
                         case Operations.MidpointFilter:
-                            bitmap = bitmap.ManageMidpointFilter(value);
+                            bitmap = bitmap.ManageMidpointFilter((int)value);
                             break;
                         case Operations.ArithmeticMeanFilter:
-                            bitmap = bitmap.ManageArithmeticMeanFilter(value);
+                            bitmap = bitmap.ManageArithmeticMeanFilter((int)value);
                             break;
                         default:
                             throw new CommandException(

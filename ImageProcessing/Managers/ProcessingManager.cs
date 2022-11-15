@@ -27,20 +27,18 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public static Bitmap ManageContrastModification(this Bitmap bitmap, int value)
+        public static Bitmap ManageContrastModification(this Bitmap bitmap, double alphaValue)
         {
-            double contrast = Math.Pow((100.0 + value) / 100.0, 2);
-
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height; y++)
                 {
-                    Color initialPixel = bitmap.GetPixel(x, y);
+                    Color pixel = bitmap.GetPixel(x, y);
 
-                    double red = ((((initialPixel.R / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    double green = ((((initialPixel.G / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    double blue = ((((initialPixel.B / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-
+                    double red = 255 * Math.Pow((double)pixel.R / 255, alphaValue);
+                    double blue = 255 * Math.Pow((double)pixel.B / 255, alphaValue);
+                    double green = 255 * Math.Pow((double)pixel.G / 255, alphaValue);
+                        
                     Color changedPixel = Color.FromArgb(
                         TruncateColorValue((int)red),
                         TruncateColorValue((int)green),
