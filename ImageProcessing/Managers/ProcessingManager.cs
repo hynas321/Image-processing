@@ -218,11 +218,14 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(x, y);
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
-                    double redColorResult = Math.Pow(pixel1.R - pixel2.R, 2);
-                    double greenColorResult = Math.Pow(pixel1.G - pixel2.G, 2);
-                    double blueColorResult = Math.Pow(pixel1.B - pixel2.B, 2);
+                    double redColorDifference = pixel1.R - pixel2.R;
+                    double greenColorDifference = pixel1.G - pixel2.G;
+                    double blueColorDifference = pixel1.B - pixel2.B;
 
-                    meanSquareErrorResult += redColorResult + greenColorResult + blueColorResult;
+                    meanSquareErrorResult +=
+                        Math.Pow(redColorDifference, 2) +
+                        Math.Pow(greenColorDifference, 2) +
+                        Math.Pow(blueColorDifference, 2) / 3;
                 }
             }
             
@@ -231,8 +234,10 @@ namespace Image_processing.Managers
 
         public static double CalculatePeakMeanSquareError(Bitmap bitmap1, Bitmap bitmap2)
         {
-            double value = 0;
-            double maxValue = 0;
+            double peakMeanSquareErrorResult = 0;
+            double maxRedColorValue = 0;
+            double maxGreenColorValue = 0;
+            double maxBlueColorValue = 0;
 
             for (int i = 0; i < bitmap1.Width; i++)
             {
@@ -241,22 +246,33 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(j, i);
                     Color pixel2 = bitmap2.GetPixel(j, i);
 
+                    if (pixel1.R > maxRedColorValue)
+                    {
+                        maxRedColorValue = pixel1.R;
+                    }
+                    if (pixel1.G > maxGreenColorValue)
+                    {
+                        maxGreenColorValue = pixel1.G;
+                    }
+                    if (pixel1.B > maxBlueColorValue)
+                    {
+                        maxBlueColorValue = pixel1.B;
+                    }
+
                     double redColorDifference = pixel1.R - pixel2.R;
                     double greenColorDifference = pixel1.G - pixel2.G;
                     double blueColorDifference = pixel1.B - pixel2.B;
 
-                    value += Math.Pow(redColorDifference, 2) +
+                    peakMeanSquareErrorResult +=
+                        Math.Pow(redColorDifference, 2) +
                         Math.Pow(greenColorDifference, 2) +
-                        Math.Pow(blueColorDifference, 2);
-
-                    if (value > maxValue)
-                    {
-                        maxValue = value;
-                    }
+                        Math.Pow(blueColorDifference, 2) / 3;
                 }
             }
 
-            return value / (bitmap1.Height * bitmap2.Width * maxValue);
+            return peakMeanSquareErrorResult /
+                (bitmap1.Width * bitmap2.Height) /
+                Math.Pow((maxRedColorValue + maxGreenColorValue + maxBlueColorValue) / 3, 2);
         }
 
         public static double CalculateSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
@@ -272,14 +288,14 @@ namespace Image_processing.Managers
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
                     signal += 
-                        Math.Pow(pixel1.R, 2) +
+                        (Math.Pow(pixel1.R, 2) +
                         Math.Pow(pixel1.G, 2) +
-                        Math.Pow(pixel1.B, 2);
+                        Math.Pow(pixel1.B, 2)) / 3;
 
                     noise +=
-                        Math.Pow(pixel1.R - pixel2.R, 2) +
+                        (Math.Pow(pixel1.R - pixel2.R, 2) +
                         Math.Pow(pixel1.G - pixel2.G, 2) +
-                        Math.Pow(pixel1.B - pixel2.B, 2);
+                        Math.Pow(pixel1.B - pixel2.B, 2)) / 3;
                 }
             }
             return 10 * Math.Log10(signal / noise);
@@ -287,34 +303,12 @@ namespace Image_processing.Managers
 
         public static double CalculatePeakSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
         {
-            double signal = 0;
-            double noise = 0;
-
-            for (int x = 0; x < bitmap1.Width; x++)
-            {
-                for (int y = 0; y < bitmap1.Height; y++)
-                {
-                    Color pixel1 = bitmap1.GetPixel(x, y);
-                    Color pixel2 = bitmap2.GetPixel(x, y);
-
-                    if (pixel1.ToRgb() > signal)
-                    {
-                        signal = pixel1.ToRgb();
-                    }
-
-                    noise +=
-                        Math.Pow(pixel1.R - pixel2.R, 2) +
-                        Math.Pow(pixel1.G - pixel2.G, 2) +
-                        Math.Pow(pixel1.B - pixel2.B, 2);
-                }
-            }
-
-            return 10 * Math.Log10(Math.Pow(signal,2) / noise);
+            return 10 * Math.Log(Math.Pow(255, 2) / CalculateSignalToNoiseRatio(bitmap1, bitmap2));
         }
 
         public static double CalculateMaximumDifference(Bitmap bitmap1, Bitmap bitmap2)
         {
-            double maximumDifference = 0;
+            double maximumDifference = -1.0;
 
             for (int x = 0; x < bitmap1.Width; x++)
             {
@@ -328,7 +322,7 @@ namespace Image_processing.Managers
                     double blueColorDifference = Math.Abs(pixel1.B - pixel2.B);
 
                     double rgbDifference =
-                        redColorDifference + greenColorDifference + blueColorDifference;
+                        (redColorDifference + greenColorDifference + blueColorDifference) / 3;
 
                     if (rgbDifference > maximumDifference)
                     {
@@ -336,6 +330,7 @@ namespace Image_processing.Managers
                     }
                 }
             }
+
             return maximumDifference;
         }
         #endregion
