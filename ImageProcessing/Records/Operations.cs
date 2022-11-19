@@ -77,6 +77,7 @@
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
             {$"filename {Histogram} charValue (R, G or B)", ""},
+            {$"filename {RaleighFinalProbabilityDensityFunction}", ""},
             {$"{Mean}", ""},
             {$"{Variance}", ""},
             {$"{StandardDeviation}", ""},

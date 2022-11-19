@@ -172,7 +172,7 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.Histogram:
-                            plot = ProcessingManager.ManageHistogram(bitmap, color);
+                            plot = ProcessingManager.CreateHistogramImage(bitmap, color);
                             break;
                         default:
                             throw new CommandException(
@@ -185,6 +185,33 @@ namespace Image_processing
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
+                //filename --operation number number
+                else if (args.Length == 4)
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+                    double alpha = double.Parse(args[2]);
+                    double minBrightness = double.Parse(args[3]);
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+
+                    switch (operation)
+                    {
+                        case Operations.RaleighFinalProbabilityDensityFunction:
+                            bitmap = bitmap.ManageRaleigh(alpha, (int)minBrightness);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
+
                 else
                 {
                     throw new CommandException(

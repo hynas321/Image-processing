@@ -1,8 +1,5 @@
 ﻿using ScottPlot;
-using ScottPlot.Drawing;
-using ScottPlot.Plottable;
 using System.Drawing;
-using System.Drawing.Text;
 
 namespace Image_processing.Managers
 {
@@ -476,9 +473,57 @@ namespace Image_processing.Managers
         #endregion
 
         #region Task 2
-        public static Plot ManageHistogram(this Bitmap bitmap, char color)
+
+        public static Plot CreateHistogramImage(this Bitmap bitmap, char channel)
         {
-            double[] colorValues = new double[256];
+            int[] colorValues = bitmap.GetChannelValues(channel);
+
+            return PlotManager.CreatePlot(
+                Array.ConvertAll<int, double>(colorValues, x => x), channel
+            );
+        }
+
+        public static Bitmap ManageRaleigh(this Bitmap bitmap, double alpha, int minBrightness)
+        {
+            int[] redColorHistogramValues = bitmap.GetChannelValues('R');
+            int[] greenColorHistogramValues = bitmap.GetChannelValues('G');
+            int[] blueColorHistogramValues = bitmap.GetChannelValues('B');
+
+            int[] redColorNewBrightness = new int[256];
+            int[] greenColorNewBrightness = new int[256];
+            int[] blueColorNewBrightness = new int[256];
+
+            for (int i = 0; i < 256; i++)
+            {
+                redColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, redColorHistogramValues, minBrightness);
+                greenColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, greenColorHistogramValues, minBrightness);
+                blueColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, blueColorHistogramValues, minBrightness);
+            }
+
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    Color pixel = bitmap.GetPixel(x, y);
+
+                    Color newPixel = Color.FromArgb(
+                        redColorNewBrightness[pixel.R],
+                        greenColorNewBrightness[pixel.G],
+                        blueColorNewBrightness[pixel.B]
+                    );
+
+                    bitmap.SetPixel(x, y, newPixel);
+                }
+            }
+
+            return ManageNegative(bitmap);
+        }
+        #endregion
+
+        #region Task 2 private methods
+        private static int[] GetChannelValues(this Bitmap bitmap, char channel)
+        {
+            int[] colorValues = new int[256];
 
             for (int y = 0; y < bitmap.Height; y++)
             {
@@ -486,7 +531,7 @@ namespace Image_processing.Managers
                 {
                     Color pixel = bitmap.GetPixel(x, y);
 
-                    switch (color)
+                    switch (channel)
                     {
                         case 'R':
                             colorValues[pixel.R] += 1;
@@ -499,17 +544,35 @@ namespace Image_processing.Managers
                             break;
                         default:
                             break;
-
                     }
                 }
             }
 
-            return PlotManager.CreatePlot(colorValues, color);
+            return colorValues;
         }
-        #endregion
 
-        #region Task 2 private methods
+        private static int CalculateMinBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
+        {
+            int histogramValuesSum = 0;
+            int N = 0;
 
+            for (N = 0; N < f; N++)
+            {
+                histogramValuesSum += histogramValues[N];
+            }
+
+            double value =
+                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (bitmap.Width * bitmap.Height) * histogramValuesSum)));
+
+            if (value < 0)
+            {
+                return f;
+            }
+
+            return TruncateColorValue(minBrightness + (int)Math.Pow(value, 0.5));
+
+
+        }
         #endregion
     }
 }
