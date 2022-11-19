@@ -223,9 +223,9 @@ namespace Image_processing.Managers
                     double blueColorDifference = pixel1.B - pixel2.B;
 
                     meanSquareErrorResult +=
-                        Math.Pow(redColorDifference, 2) +
+                        (Math.Pow(redColorDifference, 2) +
                         Math.Pow(greenColorDifference, 2) +
-                        Math.Pow(blueColorDifference, 2) / 3;
+                        Math.Pow(blueColorDifference, 2)) / 3;
                 }
             }
             
@@ -264,9 +264,9 @@ namespace Image_processing.Managers
                     double blueColorDifference = pixel1.B - pixel2.B;
 
                     peakMeanSquareErrorResult +=
-                        Math.Pow(redColorDifference, 2) +
+                        (Math.Pow(redColorDifference, 2) +
                         Math.Pow(greenColorDifference, 2) +
-                        Math.Pow(blueColorDifference, 2) / 3;
+                        Math.Pow(blueColorDifference, 2)) / 3;
                 }
             }
 
@@ -303,12 +303,12 @@ namespace Image_processing.Managers
 
         public static double CalculatePeakSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
         {
-            return 10 * Math.Log(Math.Pow(255, 2) / CalculateSignalToNoiseRatio(bitmap1, bitmap2));
+            return 10 * Math.Log10(Math.Pow(255, 2) / CalculateSignalToNoiseRatio(bitmap1, bitmap2));
         }
 
         public static double CalculateMaximumDifference(Bitmap bitmap1, Bitmap bitmap2)
         {
-            double maximumDifference = -1.0;
+            double maximumDifference = 0;
 
             for (int x = 0; x < bitmap1.Width; x++)
             {
@@ -321,13 +321,14 @@ namespace Image_processing.Managers
                     double greenColorDifference = Math.Abs(pixel1.G - pixel2.G);
                     double blueColorDifference = Math.Abs(pixel1.B - pixel2.B);
 
-                    double rgbDifference =
-                        (redColorDifference + greenColorDifference + blueColorDifference) / 3;
-
-                    if (rgbDifference > maximumDifference)
-                    {
-                        maximumDifference = rgbDifference;
-                    }
+                   if (redColorDifference + greenColorDifference + blueColorDifference 
+                        > maximumDifference * 3)
+                   {
+                        maximumDifference = 
+                            (redColorDifference +
+                            greenColorDifference +
+                            blueColorDifference) / 3;
+                   }
                 }
             }
 

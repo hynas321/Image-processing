@@ -16,7 +16,7 @@ namespace Image_processing
                 string workingDirectory = Environment.CurrentDirectory;
                 string originalImagesFolder = "OriginalImages";
                 string modifiedImagesFolder = "ModifiedImages";
-                string projectDirectory = Directory.GetParent(workingDirectory).FullName + "\\net6.0";
+                string projectDirectory = Directory.GetParent(workingDirectory)?.FullName + "\\net6.0";
                 string originalImagesFolderPath = $@"{projectDirectory}\{originalImagesFolder}";
                 string modifiedImagesFolderPath = $@"{projectDirectory}\{modifiedImagesFolder}";
                 string command = string.Join(" ", args);
