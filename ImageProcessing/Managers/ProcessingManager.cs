@@ -1,5 +1,6 @@
 ﻿using ScottPlot;
 using System.Drawing;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Image_processing.Managers
 {
@@ -67,7 +68,7 @@ namespace Image_processing.Managers
                     int blue = 255 - initialColor.B;
 
                     Color reversedColor = Color.FromArgb(red, green, blue);
-                    
+
                     bitmap.SetPixel(x, y, reversedColor);
                 }
             }
@@ -81,9 +82,9 @@ namespace Image_processing.Managers
             {
                 for (int x = 0; x < bitmap.Width / 2; x++)
                 {
-                    Color pixel1 = bitmap.GetPixel(bitmap.Width - 1 - x, y); 
-                    Color pixel2 = bitmap.GetPixel(x, y); 
-                                                                                       
+                    Color pixel1 = bitmap.GetPixel(bitmap.Width - 1 - x, y);
+                    Color pixel2 = bitmap.GetPixel(x, y);
+
                     bitmap.SetPixel(bitmap.Width - 1 - x, y, pixel2);
                     bitmap.SetPixel(x, y, pixel1);
                 }
@@ -212,7 +213,7 @@ namespace Image_processing.Managers
         public static double CalculateMeanSquareError(Bitmap bitmap1, Bitmap bitmap2)
         {
             double meanSquareErrorResult = 0;
-            
+
             for (int x = 0; x < bitmap1.Width; x++)
             {
                 for (int y = 0; y < bitmap2.Height; y++)
@@ -227,7 +228,7 @@ namespace Image_processing.Managers
                     meanSquareErrorResult += redColorResult + greenColorResult + blueColorResult;
                 }
             }
-            
+
             return meanSquareErrorResult / (bitmap1.Width * bitmap2.Height);
         }
 
@@ -273,7 +274,7 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(x, y);
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
-                    signal += 
+                    signal +=
                         Math.Pow(pixel1.R, 2) +
                         Math.Pow(pixel1.G, 2) +
                         Math.Pow(pixel1.B, 2);
@@ -311,7 +312,7 @@ namespace Image_processing.Managers
                 }
             }
 
-            return 10 * Math.Log10(Math.Pow(signal,2) / noise);
+            return 10 * Math.Log10(Math.Pow(signal, 2) / noise);
         }
 
         public static double CalculateMaximumDifference(Bitmap bitmap1, Bitmap bitmap2)
@@ -362,7 +363,7 @@ namespace Image_processing.Managers
             return color.R + color.G + color.B;
         }
 
-        public static Bitmap ManageMaxFilter(this Bitmap bitmap, int scope)
+        private static Bitmap ManageMaxFilter(this Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
@@ -379,7 +380,7 @@ namespace Image_processing.Managers
             return filteredBitmap;
         }
 
-        public static Bitmap ManageMinFilter(this Bitmap bitmap, int scope)
+        private static Bitmap ManageMinFilter(this Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
@@ -441,7 +442,6 @@ namespace Image_processing.Managers
 
             return pixelMax;
         }
-
         private static Color GetArithmeticMeanPixel(Bitmap bitmap, int x, int y, int scope)
         {
             int redValueSum = 0;
@@ -483,6 +483,7 @@ namespace Image_processing.Managers
             );
         }
 
+        #region H (histogram calculation algorithm)
         public static Bitmap ManageRaleigh(this Bitmap bitmap, double alpha, int minBrightness)
         {
             int[] redColorHistogramValues = GetHistogramChannelValues(bitmap, 'R');
@@ -518,7 +519,9 @@ namespace Image_processing.Managers
 
             return ManageNegative(bitmap);
         }
+        #endregion
 
+        #region C (image characteristics)
         public static double CalculateMean(Bitmap bitmap, char channel)
         {
             double val = 0;
@@ -627,40 +630,60 @@ namespace Image_processing.Managers
         }
         #endregion
 
-        #region Task 2 private methods
-        private static int[] GetHistogramChannelValues(Bitmap bitmap, char channel)
+        #region S (linear image filtration)
+        public static Bitmap ManageExtractionOfDetailsI(this Bitmap bitmap, int scope, string maskChars)
         {
-            int[] colorValues = new int[256];
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            int[,] mask = GetConvolutionMask(maskChars.ToUpper());
 
-            for (int y = 0; y < bitmap.Height; y++)
+            for (int x = scope; x < bitmap.Width - scope; x++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int y = scope; y < bitmap.Height - scope; y++)
                 {
-                    Color pixel = bitmap.GetPixel(x, y);
-
-                    switch (channel)
-                    {
-                        case 'R':
-                            colorValues[pixel.R] += 1;
-                            break;
-                        case 'G':
-                            colorValues[pixel.G] += 1;
-                            break;
-                        case 'B':
-                            colorValues[pixel.B] += 1;
-                            break;
-                        default:
-                            break;
-                    }
+                    Color newPixel = GetPixelAfterMasking(bitmap, x, y, scope, mask);
+                    newBitmap.SetPixel(x, y, newPixel);
                 }
             }
 
-            return colorValues;
+            return newBitmap;
+        }
+        #endregion
+
+        #region Task 2 private methods
+        private static int[] GetHistogramChannelValues(Bitmap bitmap, char channel)
+        {
+        int[] colorValues = new int[256];
+
+        for (int y = 0; y < bitmap.Height; y++)
+        {
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                Color pixel = bitmap.GetPixel(x, y);
+
+                switch (channel)
+                {
+                    case 'R':
+                        colorValues[pixel.R] += 1;
+                        break;
+                    case 'G':
+                        colorValues[pixel.G] += 1;
+                        break;
+                    case 'B':
+                        colorValues[pixel.B] += 1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return colorValues;
         }
 
         private static int CalculateMinBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
         {
             int histogramValuesSum = 0;
+            int resolution = bitmap.Width * bitmap.Height;
 
             for (int N = 0; N < f; N++)
             {
@@ -668,7 +691,7 @@ namespace Image_processing.Managers
             }
 
             double value =
-                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (bitmap.Width * bitmap.Height) * histogramValuesSum)));
+                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (resolution) * histogramValuesSum)));
 
             if (value < 0)
             {
@@ -701,7 +724,7 @@ namespace Image_processing.Managers
                 case "E":
                     return new int[,]
                     {
-                        { 1, 1, 1 },
+                        { -1, 1, 1 },
                         { -1, -2, 1 },
                         { -1, 1, 1 },
                     };
@@ -721,6 +744,37 @@ namespace Image_processing.Managers
                     };  
             }
         }
+
+        private static Color GetPixelAfterMasking(Bitmap bitmap, int x, int y, int scope, int[,] mask)
+        {
+            int firstIndex = 0;
+            int redColorSum = 0;
+            int blueColorSum = 0;
+            int greenColorSum = 0;
+
+            for (int a = x - scope; a <= x + scope; a++)
+            {
+                int secondIndex = 0;
+                for (int b = y - scope; b <= y + scope; b++)
+                {
+                    Color pixel = bitmap.GetPixel(a, b);
+
+                    redColorSum += mask[firstIndex, secondIndex] * pixel.R;
+                    blueColorSum += mask[firstIndex, secondIndex] * pixel.B;
+                    greenColorSum += mask[firstIndex, secondIndex] * pixel.G;
+                    secondIndex++;
+                }
+                firstIndex++;
+            }
+
+            return Color.FromArgb(
+                TruncateColorValue(redColorSum),
+                TruncateColorValue(blueColorSum),
+                TruncateColorValue(greenColorSum)
+            );
+        }
+        #endregion
+
         #endregion
     }
 }

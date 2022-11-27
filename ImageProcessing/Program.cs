@@ -80,12 +80,12 @@ namespace Image_processing
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
-                //filename --operation value
-                else if (args.Length == 3 && double.TryParse(args[2], out double result))
+                //filename --operation intValue
+                else if (args.Length == 3 && args[1].StartsWith("--")
+                    && int.TryParse(args[2], out int value))
                 {
                     string filename = args[0];
                     string operation = args[1];
-                    int value = int.Parse(args[2]);
 
                     Bitmap bitmap = fileManager.LoadBitmapFile(filename);
 
@@ -161,12 +161,12 @@ namespace Image_processing
                         ConsoleColor.Green
                     );
                 }
-                //filename --operation char
-                else if (args.Length == 3)
+                //filename --operation charValue
+                else if (args.Length == 3 && args[1].StartsWith("--") 
+                    && char.TryParse(args[2], out char color))
                 {
                     string filename = args[0];
                     string operation = args[1];
-                    char color = char.ToUpper(char.Parse(args[2]));
 
                     double resultToDisplay = -1;
                     bool histogramPlot = false;
@@ -224,20 +224,20 @@ namespace Image_processing
                         );
                     }
                 }
-                //filename --operation number number
-                else if (args.Length == 4)
+                //filename --operation doubleValue intValue
+                else if (args.Length == 4 && args[1].StartsWith("--") 
+                    && double.TryParse(args[2], out double alpha)
+                    && int.TryParse(args[3], out int minBrightness))
                 {
                     string filename = args[0];
                     string operation = args[1];
-                    double alpha = double.Parse(args[2]);
-                    double minBrightness = double.Parse(args[3]);
 
                     Bitmap bitmap = fileManager.LoadBitmapFile(filename);
 
                     switch (operation)
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
-                            bitmap = bitmap.ManageRaleigh(alpha, (int)minBrightness);
+                            bitmap = bitmap.ManageRaleigh(alpha, minBrightness);
                             break;
                         default:
                             throw new CommandException(
@@ -250,7 +250,32 @@ namespace Image_processing
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
+                //filename --operation intValue stringValue
+                else if (args.Length == 4 && args[1].StartsWith("--")
+                    && int.TryParse(args[2], out int scope))
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+                    string str = args[3];
 
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+
+                    switch (operation)
+                    {
+                        case Operations.ExtractionOfDetailsI:
+                            bitmap = bitmap.ManageExtractionOfDetailsI(scope, str);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
                 else
                 {
                     throw new CommandException(
