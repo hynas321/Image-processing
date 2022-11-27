@@ -496,9 +496,9 @@ namespace Image_processing.Managers
 
             for (int i = 0; i < 256; i++)
             {
-                redColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, redColorHistogramValues, minBrightness);
-                greenColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, greenColorHistogramValues, minBrightness);
-                blueColorNewBrightness[i] = bitmap.CalculateMinBrightness(i, alpha, blueColorHistogramValues, minBrightness);
+                redColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, redColorHistogramValues, minBrightness);
+                greenColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, greenColorHistogramValues, minBrightness);
+                blueColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, blueColorHistogramValues, minBrightness);
             }
 
             for (int x = 0; x < bitmap.Width; x++)
@@ -680,7 +680,7 @@ namespace Image_processing.Managers
         return colorValues;
         }
 
-        private static int CalculateMinBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
+        private static int CalculateMinInputBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
         {
             int histogramValuesSum = 0;
             int resolution = bitmap.Width * bitmap.Height;
@@ -690,15 +690,12 @@ namespace Image_processing.Managers
                 histogramValuesSum += histogramValues[N];
             }
 
-            double value =
-                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (resolution) * histogramValuesSum)));
+            int value = (int)Math.Pow(
+                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (resolution) * histogramValuesSum))),
+                0.5
+             );
 
-            if (value < 0)
-            {
-                return f;
-            }
-
-            return TruncateColorValue(minBrightness + (int)Math.Pow(value, 0.5));
+            return TruncateColorValue(minBrightness + value);
         }
 
         private static int[,] GetConvolutionMask(string mask)
