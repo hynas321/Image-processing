@@ -1,4 +1,5 @@
 ﻿using ScottPlot;
+using System;
 using System.Drawing;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -620,13 +621,13 @@ namespace Image_processing.Managers
 
             for (int m = 0; m < 256; m++)
             {
-                if (histogramChannelValues[m] != 0)
+                if (histogramChannelValues[m] > 0)
                 {
-                    val += histogramChannelValues[m] * Math.Log2(histogramChannelValues[m] / N);
+                    val += histogramChannelValues[m] * Math.Log2((double)histogramChannelValues[m] / N);
                 }
             }
 
-            return (-1 / N) * val;
+            return (-1.0 / (double)N) * val;
         }
         #endregion
 
@@ -647,6 +648,10 @@ namespace Image_processing.Managers
 
             return newBitmap;
         }
+        #endregion
+
+        #region O
+
         #endregion
 
         #region Task 2 private methods

@@ -3,6 +3,7 @@ using Image_processing.Managers;
 using Image_processing.Records;
 using ScottPlot;
 using System.Drawing;
+using System.Net.Http.Headers;
 
 namespace Image_processing
 {
