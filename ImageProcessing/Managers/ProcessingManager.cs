@@ -476,7 +476,7 @@ namespace Image_processing.Managers
 
         public static Plot CreateHistogramImage(this Bitmap bitmap, char channel)
         {
-            int[] colorValues = bitmap.GetChannelValues(channel);
+            int[] colorValues = GetHistogramChannelValues(bitmap, channel);
 
             return PlotManager.CreatePlot(
                 Array.ConvertAll<int, double>(colorValues, x => x), channel
@@ -485,9 +485,9 @@ namespace Image_processing.Managers
 
         public static Bitmap ManageRaleigh(this Bitmap bitmap, double alpha, int minBrightness)
         {
-            int[] redColorHistogramValues = bitmap.GetChannelValues('R');
-            int[] greenColorHistogramValues = bitmap.GetChannelValues('G');
-            int[] blueColorHistogramValues = bitmap.GetChannelValues('B');
+            int[] redColorHistogramValues = GetHistogramChannelValues(bitmap, 'R');
+            int[] greenColorHistogramValues = GetHistogramChannelValues(bitmap, 'G');
+            int[] blueColorHistogramValues = GetHistogramChannelValues(bitmap, 'B');
 
             int[] redColorNewBrightness = new int[256];
             int[] greenColorNewBrightness = new int[256];
@@ -518,10 +518,117 @@ namespace Image_processing.Managers
 
             return ManageNegative(bitmap);
         }
+
+        public static double CalculateMean(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            double N = bitmap.Width * bitmap.Height;
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                val += m * histogramChannelValues[m];
+            }
+
+            return 1 / N * val;
+        }
+
+        public static double CalculateVariance(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            double N = bitmap.Width * bitmap.Height;
+            double mean = CalculateMean(bitmap, channel);
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                val += Math.Pow(m - mean, 2) * histogramChannelValues[m];
+            }
+
+            return 1 / N * val;
+        }
+
+        public static double CalculateStandardDeviation(Bitmap bitmap, char channel)
+        {
+            return Math.Pow(CalculateVariance(bitmap, channel), 0.5);
+        }
+
+        public static double CalculateVariationCoefficientI(Bitmap bitmap, char channel)
+        {
+            double val = CalculateMean(bitmap, channel);
+            double deviation = CalculateStandardDeviation(bitmap, channel);
+
+            return deviation / val;
+        }
+
+        public static double CalculateAsymmetryCoefficient(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            double N = bitmap.Width * bitmap.Height;
+            double mean = CalculateMean(bitmap, channel);
+            double standardDeviation = CalculateStandardDeviation(bitmap, channel);
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                val += Math.Pow(m - mean, 3) * histogramChannelValues[m];
+            }
+
+            return 1 / Math.Pow(standardDeviation, 3) *
+                1 / N * val;
+        }
+
+        public static double CalculateFlatteningCoefficient(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            double N = bitmap.Width * bitmap.Height;
+            double b = CalculateMean(bitmap, channel);
+            double σ = CalculateStandardDeviation(bitmap, channel);
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                val += Math.Pow(m - b, 4) * histogramChannelValues[m];
+            }
+
+            return 1 / Math.Pow(σ, 4) * (1 / N * val) - 3;
+        }
+
+        public static double CalculateVariationCoefficientII(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            double N = bitmap.Width * bitmap.Height;
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                val += Math.Pow(histogramChannelValues[m], 2);
+            }
+
+            return Math.Pow(1 / N, 2) * val;
+        }
+
+        //Returns NaN
+        public static double CalculateInformationSourceEntropy(Bitmap bitmap, char channel)
+        {
+            double val = 0;
+            int N = bitmap.Width * bitmap.Height;
+            int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
+
+            for (int m = 0; m < 256; m++)
+            {
+                if (histogramChannelValues[m] != 0)
+                {
+                    val += histogramChannelValues[m] * Math.Log2(histogramChannelValues[m] / N);
+                }
+            }
+
+            return (-1 / N) * val;
+        }
         #endregion
 
         #region Task 2 private methods
-        private static int[] GetChannelValues(this Bitmap bitmap, char channel)
+        private static int[] GetHistogramChannelValues(Bitmap bitmap, char channel)
         {
             int[] colorValues = new int[256];
 
@@ -554,9 +661,8 @@ namespace Image_processing.Managers
         private static int CalculateMinBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
         {
             int histogramValuesSum = 0;
-            int N = 0;
 
-            for (N = 0; N < f; N++)
+            for (int N = 0; N < f; N++)
             {
                 histogramValuesSum += histogramValues[N];
             }
@@ -570,8 +676,50 @@ namespace Image_processing.Managers
             }
 
             return TruncateColorValue(minBrightness + (int)Math.Pow(value, 0.5));
+        }
 
+        private static int[,] GetConvolutionMask(string mask)
+        {
+            mask = mask.ToUpper();
 
+            switch (mask)
+            {
+                case "N":
+                    return new int[,]
+                    {
+                        { 1, 1, 1 },
+                        { 1, -2, 1 },
+                        { -1, -1, -1 }
+                    };
+                case "NE":
+                    return new int[,]
+                    {
+                        { 1, 1, 1 },
+                        { -1, -2, 1 },
+                        { -1, -1, 1 }
+                    };
+                case "E":
+                    return new int[,]
+                    {
+                        { 1, 1, 1 },
+                        { -1, -2, 1 },
+                        { -1, 1, 1 },
+                    };
+                case "SE":
+                    return new int[,]
+                    {
+                        { -1, -1, 1 },
+                        { -1, -2, 1 },
+                        { 1, 1, 1 },
+                    };
+                default:
+                    return new int[,]
+                    {
+                        { 0, 0, 0 },
+                        { 0, 0, 0 },
+                        { 0, 0, 0 },
+                    };  
+            }
         }
         #endregion
     }

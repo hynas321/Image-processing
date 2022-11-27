@@ -67,6 +67,8 @@ namespace Image_processing
                         case Operations.DiagonalFlip:
                             bitmap = bitmap.ManageDiagonalFlip();
                             break;
+                        case Operations.Mean:
+                            
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -164,15 +166,43 @@ namespace Image_processing
                 {
                     string filename = args[0];
                     string operation = args[1];
-                    char color = char.Parse(args[2]);
+                    char color = char.ToUpper(char.Parse(args[2]));
+
+                    double resultToDisplay = -1;
+                    bool histogramPlot = false;
 
                     Bitmap bitmap = fileManager.LoadBitmapFile(filename);
-                    Plot plot;
+                    Plot plot = new Plot();
 
                     switch (operation)
                     {
                         case Operations.Histogram:
                             plot = ProcessingManager.CreateHistogramImage(bitmap, color);
+                            histogramPlot = true;
+                            break;
+                        case Operations.Mean:
+                            resultToDisplay = ProcessingManager.CalculateMean(bitmap, color);
+                            break;
+                        case Operations.Variance:
+                            resultToDisplay = ProcessingManager.CalculateVariance(bitmap, color);
+                            break;
+                        case Operations.StandardDeviation:
+                            resultToDisplay = ProcessingManager.CalculateStandardDeviation(bitmap, color);
+                            break;
+                        case Operations.VariationCoefficientI:
+                            resultToDisplay = ProcessingManager.CalculateVariationCoefficientI(bitmap, color);
+                            break;
+                        case Operations.AsymmetryCoefficient:
+                            resultToDisplay = ProcessingManager.CalculateAsymmetryCoefficient(bitmap, color);
+                            break;
+                        case Operations.FlatteningCoefficient:
+                            resultToDisplay = ProcessingManager.CalculateFlatteningCoefficient(bitmap, color);
+                            break;
+                        case Operations.VariationCoefficientII:
+                            resultToDisplay = ProcessingManager.CalculateVariationCoefficientII(bitmap, color);
+                            break;
+                        case Operations.InformationSourceEntropy:
+                            resultToDisplay = ProcessingManager.CalculateInformationSourceEntropy(bitmap, color);
                             break;
                         default:
                             throw new CommandException(
@@ -181,9 +211,18 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveHistogram(filename, plot, color);
-
-                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                    if (histogramPlot)
+                    {
+                        fileManager.SaveHistogram(filename, plot, color);
+                        ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                    }
+                    else
+                    {
+                        ConsoleManager.WriteLineWithForegroundColor(
+                            $"Operation's \"{operation}\" result: {resultToDisplay}",
+                            ConsoleColor.Green
+                        );
+                    }
                 }
                 //filename --operation number number
                 else if (args.Length == 4)

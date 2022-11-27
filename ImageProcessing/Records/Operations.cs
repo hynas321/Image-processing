@@ -45,6 +45,8 @@
         public const string Variance = "--cvariance";
         public const string StandardDeviation = "--cstdev";
         public const string VariationCoefficientI = "--cvarcoi";
+        public const string AsymmetryCoefficient = "--casyco";
+        public const string FlatteningCoefficient = "--cfsyco";
         public const string VariationCoefficientII = "--cvarcoii";
         public const string InformationSourceEntropy = "--centropy";
         #endregion
@@ -77,15 +79,17 @@
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
             {$"filename {Histogram} charValue (R, G or B)", ""},
-            {$"filename {RaleighFinalProbabilityDensityFunction}", ""},
-            {$"{Mean}", ""},
-            {$"{Variance}", ""},
-            {$"{StandardDeviation}", ""},
-            {$"{VariationCoefficientI}", ""},
-            {$"{VariationCoefficientII}", ""},
-            {$"{InformationSourceEntropy}", ""},
-            {$"{ExtractionOfDetailsI}", ""},
-            {$"{RosenfeldOperator}", ""}
+            {$"filename {RaleighFinalProbabilityDensityFunction} doubleValue (alpha) intValue (min brightness)", ""},
+            {$"filename {Mean} charValue (R, G or B)", "Calculates mean"},
+            {$"filename {Variance} charValue (R, G or B)", "Calculates variance"},
+            {$"filename {StandardDeviation} charValue (R, G or B)", "Calculates standard deviation"},
+            {$"filename {VariationCoefficientI} charValue (R, G or B)", "Calculates variation coefficient I"},
+            {$"filename {AsymmetryCoefficient} charValue (R, G or B)", "Calculates asymmetry coefficient"},
+            {$"filename {FlatteningCoefficient} charValye (R, G or B)", "Calculates flattening coefficient" },
+            {$"filename {VariationCoefficientII} charValue (R, G or B)", "Calculates variation coefficient II"},
+            {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
+            {$"filename {ExtractionOfDetailsI}", ""},
+            {$"filename {RosenfeldOperator}", ""}
         };
     }
 }
