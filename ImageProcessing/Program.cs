@@ -68,8 +68,9 @@ namespace Image_processing
                         case Operations.DiagonalFlip:
                             bitmap = bitmap.ManageDiagonalFlip();
                             break;
-                        case Operations.Mean:
-                            
+                        case Operations.ExtractionOfDetailsIOptimized:
+                            bitmap = bitmap.ManageExtractionOfDetailsIOptimized();
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -109,6 +110,9 @@ namespace Image_processing
                             break;
                         case Operations.ArithmeticMeanFilter:
                             bitmap = bitmap.ManageArithmeticMeanFilter(value);
+                            break;
+                        case Operations.ExtractionOfDetailsI:
+                            bitmap = bitmap.ManageExtractionOfDetailsI(value);
                             break;
                         default:
                             throw new CommandException(
@@ -239,32 +243,6 @@ namespace Image_processing
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
                             bitmap = bitmap.ManageRaleigh(alpha, minBrightness);
-                            break;
-                        default:
-                            throw new CommandException(
-                                $"Command {command} is incorrect\n" +
-                                $"Run program with \"--help\" parameter to see all available commands with description"
-                            );
-                    }
-
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
-
-                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
-                }
-                //filename --operation intValue stringValue
-                else if (args.Length == 4 && args[1].StartsWith("--")
-                    && int.TryParse(args[2], out int scope))
-                {
-                    string filename = args[0];
-                    string operation = args[1];
-                    string str = args[3];
-
-                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
-
-                    switch (operation)
-                    {
-                        case Operations.ExtractionOfDetailsI:
-                            bitmap = bitmap.ManageExtractionOfDetailsI(scope, str);
                             break;
                         default:
                             throw new CommandException(

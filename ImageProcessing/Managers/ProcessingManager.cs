@@ -632,16 +632,87 @@ namespace Image_processing.Managers
         #endregion
 
         #region S (linear image filtration)
-        public static Bitmap ManageExtractionOfDetailsI(this Bitmap bitmap, int scope, string maskChars)
+        public static Bitmap ManageExtractionOfDetailsI(this Bitmap bitmap, int mask)
         {
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            int[,] mask = GetConvolutionMask(maskChars.ToUpper());
+            int[,] maskArray = GetConvolutionMask(mask);
 
-            for (int x = scope; x < bitmap.Width - scope; x++)
+            for (int x = 1; x < bitmap.Width - 1; x++)
             {
-                for (int y = scope; y < bitmap.Height - scope; y++)
+                for (int y = 1; y < bitmap.Height - 1; y++)
                 {
-                    Color newPixel = GetPixelAfterMasking(bitmap, x, y, scope, mask);
+                    Color newPixel = GetPixelAfterMasking(bitmap, x, y, maskArray);
+                    newBitmap.SetPixel(x, y, newPixel);
+                }
+            }
+
+            return newBitmap;
+        }
+
+        public static Bitmap ManageExtractionOfDetailsIOptimized(this Bitmap bitmap)
+        {
+            //Mask N
+            //{ 1,  1,  1 },
+            //{ 1, -2,  1 },
+            //{ -1, -1, -1 }
+
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+
+            for (int x = 1; x < bitmap.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap.Height - 1; y++)
+                {
+                    int redColorValue = 0;
+                    int greenColorValue = 0;
+                    int blueColorValue = 0;
+
+                    //
+                    redColorValue += bitmap.GetPixel(x - 1, y - 1).R;
+                    redColorValue += bitmap.GetPixel(x - 1, y).R;
+                    redColorValue += bitmap.GetPixel(x - 1, y + 1).R;
+
+                    redColorValue += bitmap.GetPixel(x, y - 1).R;
+                    redColorValue += (-2) * bitmap.GetPixel(x, y).R;
+                    redColorValue += bitmap.GetPixel(x, y + 1).R;
+
+                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).R;
+                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y).R;
+                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).R;
+
+                    //
+                    greenColorValue += bitmap.GetPixel(x - 1, y - 1).G;
+                    greenColorValue += bitmap.GetPixel(x - 1, y).G;
+                    greenColorValue += bitmap.GetPixel(x - 1, y + 1).G;
+
+                    greenColorValue += bitmap.GetPixel(x, y - 1).G;
+                    greenColorValue += (-2) * bitmap.GetPixel(x, y).G;
+                    greenColorValue += bitmap.GetPixel(x, y + 1).G;
+
+                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).G;
+                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y).G;
+                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).G;
+
+                    //
+                    blueColorValue += bitmap.GetPixel(x - 1, y - 1).B;
+                    blueColorValue += bitmap.GetPixel(x - 1, y).B;
+                    blueColorValue += bitmap.GetPixel(x - 1, y + 1).B;
+
+                    blueColorValue += bitmap.GetPixel(x, y - 1).B;
+                    blueColorValue += (-2) * bitmap.GetPixel(x, y).B;
+                    blueColorValue += bitmap.GetPixel(x, y + 1).B;
+
+                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).B;
+                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y).B;
+                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).B;
+
+
+
+                    Color newPixel = Color.FromArgb(
+                        TruncateColorValue(redColorValue),
+                        TruncateColorValue(greenColorValue),
+                        TruncateColorValue(blueColorValue)
+                    );
+
                     newBitmap.SetPixel(x, y, newPixel);
                 }
             }
@@ -703,34 +774,36 @@ namespace Image_processing.Managers
             return TruncateColorValue(minBrightness + value);
         }
 
-        private static int[,] GetConvolutionMask(string mask)
+        private static int[,] GetConvolutionMask(int mask)
         {
-            mask = mask.ToUpper();
-
             switch (mask)
             {
-                case "N":
+                //N
+                case 1:
                     return new int[,]
                     {
                         { 1, 1, 1 },
                         { 1, -2, 1 },
                         { -1, -1, -1 }
                     };
-                case "NE":
+                //NE
+                case 2:
                     return new int[,]
                     {
                         { 1, 1, 1 },
                         { -1, -2, 1 },
                         { -1, -1, 1 }
                     };
-                case "E":
+                //E
+                case 3:
                     return new int[,]
                     {
                         { -1, 1, 1 },
                         { -1, -2, 1 },
                         { -1, 1, 1 },
                     };
-                case "SE":
+                //SE
+                case 4:
                     return new int[,]
                     {
                         { -1, -1, 1 },
@@ -747,17 +820,17 @@ namespace Image_processing.Managers
             }
         }
 
-        private static Color GetPixelAfterMasking(Bitmap bitmap, int x, int y, int scope, int[,] mask)
+        private static Color GetPixelAfterMasking(Bitmap bitmap, int x, int y, int[,] mask)
         {
             int firstIndex = 0;
             int redColorSum = 0;
             int blueColorSum = 0;
             int greenColorSum = 0;
 
-            for (int a = x - scope; a <= x + scope; a++)
+            for (int a = x - 1; a <= x + 1; a++)
             {
                 int secondIndex = 0;
-                for (int b = y - scope; b <= y + scope; b++)
+                for (int b = y - 1; b <= y + 1; b++)
                 {
                     Color pixel = bitmap.GetPixel(a, b);
 

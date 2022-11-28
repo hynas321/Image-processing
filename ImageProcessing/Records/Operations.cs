@@ -53,6 +53,7 @@
 
         #region S (linear image filtration algorithm in spatial domain basing on convolution)
         public const string ExtractionOfDetailsI = "--sexdeti";
+        public const string ExtractionOfDetailsIOptimized = "--sexdetio";
         #endregion
 
         #region O (non-linear image filtration algorithm in spatial domain)
