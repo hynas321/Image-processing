@@ -1,7 +1,5 @@
 ﻿using ScottPlot;
-using System;
 using System.Drawing;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Image_processing.Managers
 {
@@ -666,46 +664,17 @@ namespace Image_processing.Managers
                     int greenColorValue = 0;
                     int blueColorValue = 0;
 
-                    //
-                    redColorValue += bitmap.GetPixel(x - 1, y - 1).R;
-                    redColorValue += bitmap.GetPixel(x - 1, y).R;
-                    redColorValue += bitmap.GetPixel(x - 1, y + 1).R;
+                    redColorValue = bitmap.GetPixel(x - 1, y - 1).R + bitmap.GetPixel(x - 1, y).R + bitmap.GetPixel(x - 1, y + 1).R +
+                        bitmap.GetPixel(x, y - 1).R + (-2) * bitmap.GetPixel(x, y).R + bitmap.GetPixel(x, y + 1).R +
+                        (-1) * bitmap.GetPixel(x + 1, y - 1).R + (-1) * bitmap.GetPixel(x + 1, y).R + (-1) * bitmap.GetPixel(x + 1, y + 1).R;
 
-                    redColorValue += bitmap.GetPixel(x, y - 1).R;
-                    redColorValue += (-2) * bitmap.GetPixel(x, y).R;
-                    redColorValue += bitmap.GetPixel(x, y + 1).R;
+                    greenColorValue = bitmap.GetPixel(x - 1, y - 1).G + bitmap.GetPixel(x - 1, y).G + bitmap.GetPixel(x - 1, y + 1).G +
+                        bitmap.GetPixel(x, y - 1).G + (-2) * bitmap.GetPixel(x, y).G + bitmap.GetPixel(x, y + 1).G +
+                        (-1) * bitmap.GetPixel(x + 1, y - 1).G + (-1) * bitmap.GetPixel(x + 1, y).G + (-1) * bitmap.GetPixel(x + 1, y + 1).G;
 
-                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).R;
-                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y).R;
-                    redColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).R;
-
-                    //
-                    greenColorValue += bitmap.GetPixel(x - 1, y - 1).G;
-                    greenColorValue += bitmap.GetPixel(x - 1, y).G;
-                    greenColorValue += bitmap.GetPixel(x - 1, y + 1).G;
-
-                    greenColorValue += bitmap.GetPixel(x, y - 1).G;
-                    greenColorValue += (-2) * bitmap.GetPixel(x, y).G;
-                    greenColorValue += bitmap.GetPixel(x, y + 1).G;
-
-                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).G;
-                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y).G;
-                    greenColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).G;
-
-                    //
-                    blueColorValue += bitmap.GetPixel(x - 1, y - 1).B;
-                    blueColorValue += bitmap.GetPixel(x - 1, y).B;
-                    blueColorValue += bitmap.GetPixel(x - 1, y + 1).B;
-
-                    blueColorValue += bitmap.GetPixel(x, y - 1).B;
-                    blueColorValue += (-2) * bitmap.GetPixel(x, y).B;
-                    blueColorValue += bitmap.GetPixel(x, y + 1).B;
-
-                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y - 1).B;
-                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y).B;
-                    blueColorValue += (-1) * bitmap.GetPixel(x + 1, y + 1).B;
-
-
+                    blueColorValue = bitmap.GetPixel(x - 1, y - 1).B + bitmap.GetPixel(x - 1, y).B + bitmap.GetPixel(x - 1, y + 1).B +
+                        bitmap.GetPixel(x, y - 1).B + (-2) * bitmap.GetPixel(x, y).B + bitmap.GetPixel(x, y + 1).B +
+                        (-1) * bitmap.GetPixel(x + 1, y - 1).B + (-1) * bitmap.GetPixel(x + 1, y).B + (-1) * bitmap.GetPixel(x + 1, y + 1).B;
 
                     Color newPixel = Color.FromArgb(
                         TruncateColorValue(redColorValue),
