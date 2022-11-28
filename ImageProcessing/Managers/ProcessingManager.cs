@@ -722,7 +722,58 @@ namespace Image_processing.Managers
         #endregion
 
         #region O
+        public static Bitmap ManageSobelOperator(this Bitmap bitmap)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
+            for (int x = 1; x < bitmap.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap.Height - 1; y++)
+                {
+                    //A1 x, y+1
+                    //A3 x+1, y
+                    //A5 x,   y-1
+                    //A7 x-1, y
+                    double redColorValueX =
+                        (bitmap.GetPixel(x + 1, y + 1).R + 2 * bitmap.GetPixel(x + 1, y).R + bitmap.GetPixel(x + 1, y - 1).R) -
+                        (bitmap.GetPixel(x - 1, y + 1).R + 2 * bitmap.GetPixel(x - 1, y).R + bitmap.GetPixel(x - 1, y - 1).R);
+
+                    double greenColorValueX =
+                        (bitmap.GetPixel(x + 1, y + 1).G + 2 * bitmap.GetPixel(x + 1, y).G + bitmap.GetPixel(x + 1, y - 1).G) -
+                        (bitmap.GetPixel(x - 1, y + 1).G + 2 * bitmap.GetPixel(x - 1, y).G + bitmap.GetPixel(x - 1, y - 1).G);
+
+                    double blueColorValueX =
+                        (bitmap.GetPixel(x + 1, y + 1).G + 2 * bitmap.GetPixel(x + 1, y).G + bitmap.GetPixel(x + 1, y - 1).G) -
+                        (bitmap.GetPixel(x - 1, y + 1).G + 2 * bitmap.GetPixel(x - 1, y).G + bitmap.GetPixel(x - 1, y - 1).G);
+
+                    double redColorValueY =
+                        (bitmap.GetPixel(x - 1, y + 1).R + 2 * bitmap.GetPixel(x, y + 1).R + bitmap.GetPixel(x + 1, y + 1).R) -
+                        (bitmap.GetPixel(x - 1, y - 1).R + 2 * bitmap.GetPixel(x, y - 1).R + bitmap.GetPixel(x + 1, y - 1).R);
+
+                    double greenColorValueY =
+                        (bitmap.GetPixel(x - 1, y + 1).G + 2 * bitmap.GetPixel(x, y + 1).G + bitmap.GetPixel(x + 1, y + 1).G) -
+                        (bitmap.GetPixel(x - 1, y - 1).G + 2 * bitmap.GetPixel(x, y - 1).G + bitmap.GetPixel(x + 1, y - 1).G);
+
+                    double blueColorValueY =
+                        (bitmap.GetPixel(x - 1, y + 1).B + 2 * bitmap.GetPixel(x, y + 1).B + bitmap.GetPixel(x + 1, y + 1).B) -
+                        (bitmap.GetPixel(x - 1, y - 1).B + 2 * bitmap.GetPixel(x, y - 1).B + bitmap.GetPixel(x + 1, y - 1).B);
+
+                    double redColorValue = Math.Sqrt(Math.Pow(redColorValueX, 2) + Math.Pow(redColorValueY, 2));
+                    double greenColorValue = Math.Sqrt(Math.Pow(greenColorValueX, 2) + Math.Pow(greenColorValueY, 2));
+                    double blueColorValue = Math.Sqrt(Math.Pow(blueColorValueX, 2) + Math.Pow(blueColorValueY, 2));
+
+                    Color newPixel = Color.FromArgb(
+                        TruncateColorValue((int)redColorValue),
+                        TruncateColorValue((int)greenColorValue),
+                        TruncateColorValue((int)blueColorValue)
+                    );
+
+                    newBitmap.SetPixel(x, y, newPixel);
+                }
+            }
+
+            return newBitmap;
+        }
         #endregion
 
         #region Task 2 private methods

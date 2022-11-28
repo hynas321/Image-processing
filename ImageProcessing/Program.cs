@@ -71,6 +71,9 @@ namespace Image_processing
                         case Operations.ExtractionOfDetailsIOptimized:
                             bitmap = bitmap.ManageExtractionOfDetailsIOptimized();
                             break;
+                        case Operations.SobelOperator:
+                            bitmap = bitmap.ManageSobelOperator();
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +

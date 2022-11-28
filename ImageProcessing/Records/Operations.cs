@@ -57,7 +57,7 @@
         #endregion
 
         #region O (non-linear image filtration algorithm in spatial domain)
-        public const string RosenfeldOperator = "--orosenfeld";
+        public const string SobelOperator = "--osobel";
         #endregion
         #endregion
 
@@ -90,7 +90,7 @@
             {$"filename {VariationCoefficientII} charValue (R, G or B)", "Calculates variation coefficient II"},
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
             {$"filename {ExtractionOfDetailsI}", ""},
-            {$"filename {RosenfeldOperator}", ""}
+            {$"filename {SobelOperator}", ""}
         };
     }
 }
