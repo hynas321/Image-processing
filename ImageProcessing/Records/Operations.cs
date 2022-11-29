@@ -89,8 +89,9 @@
             {$"filename {FlatteningCoefficient} charValye (R, G or B)", "Calculates flattening coefficient" },
             {$"filename {VariationCoefficientII} charValue (R, G or B)", "Calculates variation coefficient II"},
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
-            {$"filename {ExtractionOfDetailsI}", ""},
-            {$"filename {SobelOperator}", ""}
+            {$"filename {ExtractionOfDetailsI} intValue (1, 2, 3, 4), masks: N, NE, SE, S", "Applies extraction of details"},
+            {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
+            {$"filename {SobelOperator}", "Applies sobel operator"}
         };
     }
 }
