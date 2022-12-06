@@ -59,22 +59,22 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.Negative:
-                            bitmap = processingManager.ManageNegative(bitmap);
+                            bitmap = processingManager.ApplyNegative(bitmap);
                             break;
                         case Operations.HorizontalFlip:
-                            bitmap = processingManager.ManageHorizontalFlip(bitmap);
+                            bitmap = processingManager.ApplyHorizontalFlip(bitmap);
                             break;
                         case Operations.VerticalFlip:
-                            bitmap = processingManager.ManageVerticalFlip(bitmap);
+                            bitmap = processingManager.ApplyVerticalFlip(bitmap);
                             break;
                         case Operations.DiagonalFlip:
-                            bitmap = processingManager.ManageDiagonalFlip(bitmap);
+                            bitmap = processingManager.ApplyDiagonalFlip(bitmap);
                             break;
                         case Operations.ExtractionOfDetailsIOptimized:
-                            bitmap = processingManager.ManageExtractionOfDetailsIOptimized(bitmap);
+                            bitmap = processingManager.ApplyExtractionOfDetailsIOptimized(bitmap);
                             break;
                         case Operations.SobelOperator:
-                            bitmap = processingManager.ManageSobelOperator(bitmap);
+                            bitmap = processingManager.ApplySobelOperator(bitmap);
                             break;
                         default:
                             throw new CommandException(
@@ -99,25 +99,25 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.BrightnessModification:
-                            bitmap = processingManager.ManageBrightnessModification(bitmap, value);
+                            bitmap = processingManager.ApplyBrightnessModification(bitmap, value);
                             break;
                         case Operations.ContrastModification:
-                            bitmap = processingManager.ManageContrastModification(bitmap, value);
+                            bitmap = processingManager.ApplyContrastModification(bitmap, value);
                             break;
                         case Operations.ImageShrinking:
-                            bitmap = processingManager.ManageImageShrinking(bitmap, value);
+                            bitmap = processingManager.ApplyImageShrinking(bitmap, value);
                             break;
                         case Operations.ImageEnlargement:
-                            bitmap = processingManager.ManageImageEnlargement(bitmap, value);
+                            bitmap = processingManager.ApplyImageEnlargement(bitmap, value);
                             break;
                         case Operations.MidpointFilter:
-                            bitmap = processingManager.ManageMidpointFilter(bitmap, value);
+                            bitmap = processingManager.ApplyMidpointFilter(bitmap, value);
                             break;
                         case Operations.ArithmeticMeanFilter:
-                            bitmap = processingManager.ManageArithmeticMeanFilter(bitmap, value);
+                            bitmap = processingManager.ApplyArithmeticMeanFilter(bitmap, value);
                             break;
                         case Operations.ExtractionOfDetailsI:
-                            bitmap = processingManager.ManageExtractionOfDetailsI(bitmap, value);
+                            bitmap = processingManager.ApplyExtractionOfDetailsI(bitmap, value);
                             break;
                         default:
                             throw new CommandException(
@@ -247,7 +247,7 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
-                            bitmap = processingManager.ManageRaleigh(bitmap, alpha, minBrightness);
+                            bitmap = processingManager.ApplyRaleigh(bitmap, alpha, minBrightness);
                             break;
                         default:
                             throw new CommandException(

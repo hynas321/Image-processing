@@ -16,7 +16,7 @@ namespace Image_processing.Managers
         }
 
         #region H (histogram calculation algorithm)
-        public Bitmap ManageRaleigh(Bitmap bitmap, double alpha, int minBrightness)
+        public Bitmap ApplyRaleigh(Bitmap bitmap, double alpha, int minBrightness)
         {
             int[] redColorHistogramValues = GetHistogramChannelValues(bitmap, 'R');
             int[] greenColorHistogramValues = GetHistogramChannelValues(bitmap, 'G');
@@ -49,7 +49,7 @@ namespace Image_processing.Managers
                 }
             }
 
-            return ManageNegative(bitmap);
+            return ApplyNegative(bitmap);
         }
         #endregion
 
@@ -162,7 +162,7 @@ namespace Image_processing.Managers
         #endregion
 
         #region S (linear image filtration)
-        public Bitmap ManageExtractionOfDetailsI(Bitmap bitmap, int mask)
+        public Bitmap ApplyExtractionOfDetailsI(Bitmap bitmap, int mask)
         {
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
             int[,] maskArray = GetConvolutionMask(mask);
@@ -179,7 +179,7 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
-        public Bitmap ManageExtractionOfDetailsIOptimized(Bitmap bitmap)
+        public Bitmap ApplyExtractionOfDetailsIOptimized(Bitmap bitmap)
         {
             //Mask N
             //{ 1,  1,  1 },
@@ -223,7 +223,7 @@ namespace Image_processing.Managers
         #endregion
 
         #region O (non-linear image filtration)
-        public Bitmap ManageSobelOperator(Bitmap bitmap)
+        public Bitmap ApplySobelOperator(Bitmap bitmap)
         {
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 

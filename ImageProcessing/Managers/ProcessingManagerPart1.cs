@@ -6,7 +6,7 @@ namespace Image_processing.Managers
     public partial class ProcessingManager
     {
         #region B (elementary operations)
-        public Bitmap ManageBrightnessModification(Bitmap bitmap, int value)
+        public Bitmap ApplyBrightnessModification(Bitmap bitmap, int value)
         {
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -27,7 +27,7 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public Bitmap ManageContrastModification(Bitmap bitmap, double alphaValue)
+        public Bitmap ApplyContrastModification(Bitmap bitmap, double alphaValue)
         {
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -52,7 +52,7 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public Bitmap ManageNegative(Bitmap bitmap)
+        public Bitmap ApplyNegative(Bitmap bitmap)
         {
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -76,7 +76,7 @@ namespace Image_processing.Managers
         #endregion
 
         #region G (geometric operations)
-        public Bitmap ManageHorizontalFlip(Bitmap bitmap)
+        public Bitmap ApplyHorizontalFlip(Bitmap bitmap)
         {
             for (int y = 0; y < bitmap.Height; y++)
             {
@@ -93,7 +93,7 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public Bitmap ManageVerticalFlip(Bitmap bitmap)
+        public Bitmap ApplyVerticalFlip(Bitmap bitmap)
         {
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -110,7 +110,7 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public Bitmap ManageDiagonalFlip(Bitmap bitmap)
+        public Bitmap ApplyDiagonalFlip(Bitmap bitmap)
         {
             for (int x = 0; x < bitmap.Width; x++)
             {
@@ -127,7 +127,7 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public Bitmap ManageImageShrinking(Bitmap bitmap, int value)
+        public Bitmap ApplyImageShrinking(Bitmap bitmap, int value)
         {
             int shrunkWidth = bitmap.Width / value;
             int shrunkHeight = bitmap.Height / value;
@@ -147,7 +147,7 @@ namespace Image_processing.Managers
             return enlargedBitmap;
         }
 
-        public Bitmap ManageImageEnlargement(Bitmap bitmap, int value)
+        public Bitmap ApplyImageEnlargement(Bitmap bitmap, int value)
         {
             int enlargedWidth = bitmap.Width * value;
             int enlargedHeight = bitmap.Height * value;
@@ -170,10 +170,10 @@ namespace Image_processing.Managers
         #endregion
 
         #region N (noise removal)
-        public Bitmap ManageMidpointFilter(Bitmap bitmap, int scope)
+        public Bitmap ApplyMidpointFilter(Bitmap bitmap, int scope)
         {
-            Bitmap maxFilteredBitmap = ManageMaxFilter(bitmap, scope);
-            Bitmap minFilteredBitmap = ManageMinFilter(bitmap, scope);
+            Bitmap maxFilteredBitmap = ApplyMaxFilter(bitmap, scope);
+            Bitmap minFilteredBitmap = ApplyMinFilter(bitmap, scope);
             Bitmap midpointFilteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
             for (int x = 0; x < bitmap.Width; x++)
@@ -196,7 +196,7 @@ namespace Image_processing.Managers
             return midpointFilteredBitmap;
         }
 
-        public Bitmap ManageArithmeticMeanFilter(Bitmap bitmap, int scope)
+        public Bitmap ApplyArithmeticMeanFilter(Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
@@ -370,7 +370,7 @@ namespace Image_processing.Managers
             return color.R + color.G + color.B;
         }
 
-        private Bitmap ManageMaxFilter(Bitmap bitmap, int scope)
+        private Bitmap ApplyMaxFilter(Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
@@ -387,7 +387,7 @@ namespace Image_processing.Managers
             return filteredBitmap;
         }
 
-        private Bitmap ManageMinFilter(Bitmap bitmap, int scope)
+        private Bitmap ApplyMinFilter(Bitmap bitmap, int scope)
         {
             Bitmap filteredBitmap = new Bitmap(bitmap.Width, bitmap.Height);
 
