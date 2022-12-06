@@ -61,9 +61,20 @@
         #endregion
         #endregion
 
+        #region Task 3
+        #region M (morphological operations)
+        public const string MorphologicalOperation = "--morphop";
+        #endregion
+
+        #region R (image segmentation)
+        public const string RegionGrowing = "--merging";
+        #endregion
+        #endregion
+
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
+            {$"*PART1*", ""},
             {$"filename {BrightnessModification} intValue", "Modifies image's brightness by the given value"},
             {$"filename {ContrastModification} intValue", "Modifies image's contrast by the given value"},
             {$"filename {Negative}", "Negates an image"},
@@ -79,6 +90,7 @@
             {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
+            {$"*PART2*", ""},
             {$"filename {Histogram} charValue (R, G or B)", ""},
             {$"filename {RaleighFinalProbabilityDensityFunction} doubleValue (alpha) intValue (min brightness)", ""},
             {$"filename {Mean} charValue (R, G or B)", "Calculates mean"},
@@ -91,7 +103,10 @@
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
             {$"filename {ExtractionOfDetailsI} intValue (1, 2, 3, 4), masks: N, NE, SE, S", "Applies extraction of details"},
             {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
-            {$"filename {SobelOperator}", "Applies sobel operator"}
+            {$"filename {SobelOperator}", "Applies sobel operator"},
+            {$"*PART3*", ""},
+            {$"filename {MorphologicalOperation}", ""},
+            {$"filename {RegionGrowing}", ""}
         };
     }
 }
