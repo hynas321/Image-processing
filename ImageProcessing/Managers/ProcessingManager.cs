@@ -277,8 +277,13 @@ namespace Image_processing.Managers
 
         public static double CalculateSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
         {
-            double signal = 0;
-            double noise = 0;
+            double redSignal = 0;
+            double greenSignal = 0;
+            double blueSignal = 0;
+
+            double redNoise = 0;
+            double greenNoise = 0;
+            double blueNoise = 0;
 
             for (int x = 0; x < bitmap1.Width; x++)
             {
@@ -287,18 +292,18 @@ namespace Image_processing.Managers
                     Color pixel1 = bitmap1.GetPixel(x, y);
                     Color pixel2 = bitmap2.GetPixel(x, y);
 
-                    signal += 
-                        (Math.Pow(pixel1.R, 2) +
-                        Math.Pow(pixel1.G, 2) +
-                        Math.Pow(pixel1.B, 2)) / 3;
+                    redSignal += Math.Pow(pixel2.R, 2);
+                    greenSignal += Math.Pow(pixel2.G, 2);
+                    blueSignal += Math.Pow(pixel2.B, 2);
 
-                    noise +=
-                        (Math.Pow(pixel1.R - pixel2.R, 2) +
-                        Math.Pow(pixel1.G - pixel2.G, 2) +
-                        Math.Pow(pixel1.B - pixel2.B, 2)) / 3;
+                    redNoise += Math.Pow(pixel2.R - pixel1.R, 2);
+                    greenNoise += Math.Pow(pixel2.G - pixel1.G, 2);
+                    blueNoise += Math.Pow(pixel2.B - pixel1.B, 2);
                 }
             }
-            return 10 * Math.Log10(signal / noise);
+            return (10 * Math.Log10(redSignal / redNoise) +
+                10 * Math.Log10(greenSignal / greenNoise) +
+                10 * Math.Log10(blueSignal / blueNoise)) / 3;
         }
 
         public static double CalculatePeakSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
