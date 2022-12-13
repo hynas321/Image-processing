@@ -365,7 +365,7 @@ namespace Image_processing.Managers
             return colorValue;
         }
 
-        private int ToRgb(Color color)
+        private static int ToRgb(Color color)
         {
             return color.R + color.G + color.B;
         }

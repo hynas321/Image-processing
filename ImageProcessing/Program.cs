@@ -119,6 +119,18 @@ namespace Image_processing
                         case Operations.ExtractionOfDetailsI:
                             bitmap = processingManager.ApplyExtractionOfDetailsI(bitmap, value);
                             break;
+                        case Operations.Dilation:
+                            bitmap = processingManager.ApplyDilation(bitmap, value);
+                            break;
+                        case Operations.Erosion:
+                            bitmap = processingManager.ApplyErosion(bitmap, value);
+                            break;
+                        case Operations.Opening:
+                            bitmap = processingManager.ApplyOpening(bitmap, value);
+                            break;
+                        case Operations.Closing:
+                            bitmap = processingManager.ApplyClosing(bitmap, value);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +

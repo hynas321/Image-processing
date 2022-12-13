@@ -63,11 +63,16 @@
 
         #region Task 3
         #region M (morphological operations)
+        public const string Dilation = "--dilation";
+        public const string Erosion = "--erosion";
+        public const string Opening = "--opening";
+        public const string Closing = "--closing";
+        public const string Hmt = "--hmt";
         public const string MorphologicalOperation = "--morphop";
         #endregion
 
         #region R (image segmentation)
-        public const string RegionGrowing = "--merging";
+        public const string Merging = "--merging";
         #endregion
         #endregion
 
@@ -105,8 +110,13 @@
             {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
             {$"filename {SobelOperator}", "Applies sobel operator"},
             {$"*PART3*", ""},
+            {$"filename {Dilation} intValue (1-10)", "Applies dilation operation for a chosen mask"},
+            {$"filename {Erosion} intValue (1-10)", "Applies erosion operation for a chosen mask"},
+            {$"filename {Opening} intValue (1-10)", "Applies opening operation for a chosen mask"},
+            {$"filename {Closing} intValue (1-10)", "Applies closing operation for a chosen mask"},
+            {$"filename {Hmt} intValue (1-10)", "Applies HMT operation for a chosen mask"},
             {$"filename {MorphologicalOperation}", ""},
-            {$"filename {RegionGrowing}", ""}
+            {$"filename {Merging}", ""}
         };
     }
 }
