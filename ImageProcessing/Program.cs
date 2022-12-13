@@ -131,6 +131,9 @@ namespace Image_processing
                         case Operations.Closing:
                             bitmap = processingManager.ApplyClosing(bitmap, value);
                             break;
+                        case Operations.Hmt:
+                            bitmap = processingManager.ApplyHmt(bitmap, value);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +

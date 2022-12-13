@@ -1,6 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Image_processing.Managers
@@ -103,6 +101,50 @@ namespace Image_processing.Managers
             return ApplyErosion(ApplyDilation(bitmap, maskNumber), maskNumber);
         }
 
+        public Bitmap ApplyHmt(Bitmap bitmap, int maskNumber)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            int[,] mask = GetMask(maskNumber);
+
+            for (int x = 1; x < bitmap.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap.Height - 1; y++)
+                {
+                    Color pixel = bitmap.GetPixel(x, y);
+
+                    bool Hmt = true;
+
+                    for (int a = -1; a < 2; a++)
+                    {
+                        for (int b = -1; b < 2; b++)
+                        {
+                            if (mask[a + 1, b + 1] == 0)
+                            {
+                                continue;
+                            }
+
+                            if (mask[a + 1, b + 1] == 2 && bitmap.GetPixel(x + a, y + b) != Color.FromArgb(255, 255, 255))
+                            {
+                                Hmt = false;
+                            }
+                        }
+                    }
+
+                    if (Hmt)
+                    {
+                        newBitmap.SetPixel(x, y, Color.FromArgb(0, 0, 0));
+                    }
+                    else
+                    {
+                        newBitmap.SetPixel(x, y, bitmap.GetPixel(x, y));
+                    }
+
+                }
+            }
+
+            return newBitmap;
+        }
+
         #region Task 3 private methods
 
         public int[,] GetMask(int maskNumber)
@@ -178,6 +220,20 @@ namespace Image_processing.Managers
                         {0, 1, 1},
                         {0, 1, 0},
                         {0, 0, 0}
+                    };
+                case 11:
+                    return new int[,]
+                    {
+                        {1, 0, 0},
+                        {1, 2, 0},
+                        {1, 0, 0}
+                    };
+                case 12:
+                    return new int[,]
+                    {
+                        {2, 2, 2},
+                        {0, 1, 0},
+                        {1, 1, 1}
                     };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(maskNumber));
