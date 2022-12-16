@@ -134,6 +134,15 @@ namespace Image_processing
                         case Operations.Hmt:
                             bitmap = processingManager.ApplyHmt(bitmap, value);
                             break;
+                        case Operations.M1Operation1:
+                            bitmap = processingManager.ApplyM1Operation1(bitmap, value);
+                            break;
+                        case Operations.M1Operation2:
+                            bitmap = processingManager.ApplyM1Operation2(bitmap, value);
+                            break;
+                        case Operations.M1Operation3:
+                            bitmap = processingManager.ApplyM1Operation3(bitmap, value);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -141,7 +150,7 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, value);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
@@ -271,7 +280,7 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, alpha, minBrightness);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }

@@ -68,7 +68,9 @@
         public const string Opening = "--opening";
         public const string Closing = "--closing";
         public const string Hmt = "--hmt";
-        public const string MorphologicalOperation = "--morphop";
+        public const string M1Operation1 = "--m1op1";
+        public const string M1Operation2 = "--m1op2";
+        public const string M1Operation3 = "--m1op3";
         #endregion
 
         #region R (image segmentation)
@@ -110,12 +112,14 @@
             {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
             {$"filename {SobelOperator}", "Applies sobel operator"},
             {$"*PART3*", ""},
-            {$"filename {Dilation} intValue (1-10)", "Applies dilation operation for a chosen mask"},
-            {$"filename {Erosion} intValue (1-10)", "Applies erosion operation for a chosen mask"},
-            {$"filename {Opening} intValue (1-10)", "Applies opening operation for a chosen mask"},
-            {$"filename {Closing} intValue (1-10)", "Applies closing operation for a chosen mask"},
-            {$"filename {Hmt} intValue (1-10)", "Applies HMT operation for a chosen mask"},
-            {$"filename {MorphologicalOperation}", ""},
+            {$"filename {Dilation} intValue (1-12)", "Applies dilation operation for a chosen mask"},
+            {$"filename {Erosion} intValue (1-12)", "Applies erosion operation for a chosen mask"},
+            {$"filename {Opening} intValue (1-12)", "Applies opening operation for a chosen mask"},
+            {$"filename {Closing} intValue (1-12)", "Applies closing operation for a chosen mask"},
+            {$"filename {Hmt} intValue (1-12)", "Applies HMT operation for a chosen mask"},
+            {$"filename {M1Operation1} intValue (1-12)", ""},
+            {$"filename {M1Operation2} intValue (1-12)", ""},
+            {$"filename {M1Operation3} intValue (1-12)", ""},
             {$"filename {Merging}", ""}
         };
     }

@@ -1,5 +1,7 @@
 ﻿using ScottPlot;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Image_processing.Managers
 {
@@ -26,7 +28,7 @@ namespace Image_processing.Managers
 
             if (File.Exists($@"{originalImagesFolderPath}\{file}") == true)
             {
-                bitmap = new Bitmap(Image.FromFile($@"{originalImagesFolderPath}\{file}"));
+                bitmap = new Bitmap((Bitmap)Image.FromFile($@"{originalImagesFolderPath}\{file}"));
             }
             else if (File.Exists($@"{modifiedImagesFolderPath}\{file}") == true)
             {
@@ -42,18 +44,27 @@ namespace Image_processing.Managers
             return bitmap;
         }
 
-        public void SaveBitmapFile(string file, Bitmap bitmap, string operation)
+        public void SaveBitmapFile(string file, Bitmap bitmap, string operation, [Optional] double? parameter1, [Optional] double? parameter2)
         {
             try
             {
-                string savedFile
-                    = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_{file}";
+                string savedFile;
 
-                File.Copy(
-                    $@"{originalImagesFolderPath}\{file}",
-                    $@"{modifiedImagesFolderPath}\{file}",
-                    true
-                );
+                if (parameter1 != null && parameter2 == null)
+                {
+                    savedFile
+                        = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_param_{parameter1}_{file}";
+                }
+                else if (parameter1 != null && parameter2 != null)
+                {
+                    savedFile
+                        = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_param1_{parameter1}_param2_{parameter2}_{file}";
+                }
+                else
+                {
+                    savedFile
+                        = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_{file}";
+                }
 
                 bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
 
