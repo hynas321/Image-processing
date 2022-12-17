@@ -2,6 +2,7 @@
 using Image_processing.Managers;
 using Image_processing.Records;
 using ScottPlot;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace Image_processing
@@ -9,6 +10,7 @@ namespace Image_processing
     public class Program
     {
         private static FileManager? fileManager;
+        private static Stopwatch stopWatch = new Stopwatch();
 
         static void Main(string[] args)
         {
@@ -29,6 +31,8 @@ namespace Image_processing
                     plotImagesFolderPath
                 );
 
+                stopWatch.Start();
+
                 if (args.Length == 0)
                 {
                     ConsoleManager.DisplayHelpInformationMessage();
@@ -44,6 +48,8 @@ namespace Image_processing
 
                     Environment.Exit(0);
                 }
+
+
 
                 //filename --operation
                 if (args.Length == 2 && args[1].StartsWith("--"))
@@ -264,6 +270,10 @@ namespace Image_processing
                         $"Run program with \"--help\" parameter to see all available commands with description"
                     );
                 }
+
+                stopWatch.Stop();
+
+                Console.WriteLine($"Time elapsed: {stopWatch.ElapsedMilliseconds}ms");
             }
             catch (Exception ex)
             {
