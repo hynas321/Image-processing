@@ -135,13 +135,13 @@ namespace Image_processing
                             bitmap = processingManager.ApplyHmt(bitmap, value);
                             break;
                         case Operations.M1Operation1:
-                            bitmap = processingManager.ApplyM1Operation1(bitmap, value);
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), bitmap, value);
                             break;
                         case Operations.M1Operation2:
-                            bitmap = processingManager.ApplyM1Operation2(bitmap, value);
+                            bitmap = processingManager.ApplyM1Operation(bitmap, processingManager.ApplyErosion(bitmap, value), value);
                             break;
                         case Operations.M1Operation3:
-                            bitmap = processingManager.ApplyM1Operation3(bitmap, value);
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), processingManager.ApplyErosion(bitmap, value), value);
                             break;
                         default:
                             throw new CommandException(
@@ -281,6 +281,33 @@ namespace Image_processing
                     }
 
                     fileManager.SaveBitmapFile(args[0], bitmap, operation, alpha, minBrightness);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
+                //filename --operation intValue intValue intValue
+                else if (args.Length == 5 && args[1].StartsWith("--")
+                    && int.TryParse(args[2], out int x)
+                    && int.TryParse(args[3], out int y)
+                    && int.TryParse(args[4], out int threshold))
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+
+                    switch (operation)
+                    {
+                        case Operations.Merging:
+                            bitmap = processingManager.ApplyMerging(bitmap, x, y, threshold);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }

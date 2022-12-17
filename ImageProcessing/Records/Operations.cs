@@ -117,10 +117,10 @@
             {$"filename {Opening} intValue (1-12)", "Applies opening operation for a chosen mask"},
             {$"filename {Closing} intValue (1-12)", "Applies closing operation for a chosen mask"},
             {$"filename {Hmt} intValue (1-12)", "Applies HMT operation for a chosen mask"},
-            {$"filename {M1Operation1} intValue (1-12)", ""},
-            {$"filename {M1Operation2} intValue (1-12)", ""},
-            {$"filename {M1Operation3} intValue (1-12)", ""},
-            {$"filename {Merging}", ""}
+            {$"filename {M1Operation1} intValue (1-12)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
+            {$"filename {M1Operation2} intValue (1-12)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
+            {$"filename {M1Operation3} intValue (1-12)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
+            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"}
         };
     }
 }

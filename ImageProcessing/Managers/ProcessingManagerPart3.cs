@@ -146,179 +146,100 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
-        public Bitmap ApplyM1Operation1(Bitmap bitmap, int maskNumber)
-        {
-            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            Bitmap dilatedBitmap = ApplyDilation(bitmap, maskNumber);
-            int[,] mask = GetMask(maskNumber);
-
-            for (int x = 1; x < bitmap.Width - 1; x++)
-            {
-                for (int y = 1; y < bitmap.Height - 1; y++)
-                {
-                    for (int a = -1; a < 2; a++)
-                    {
-                        for (int b = -1; b < 2; b++)
-                        {
-                            if (mask[a + 1, b + 1] == -1)
-                            {
-                                continue;
-                            }
-
-                            Color pixel = bitmap.GetPixel(x + a, y + b);
-
-                            int initialRedColorValue = pixel.R;
-                            int initialGreenColorValue = pixel.G;
-                            int initialBlueColorValue = pixel.B;
-
-                            if (initialRedColorValue == 0 || initialGreenColorValue == 0 || initialBlueColorValue == 0)
-                            {
-                                initialRedColorValue = 1;
-                                initialGreenColorValue = 1;
-                                initialBlueColorValue = 1;
-                            }
-
-                            Color pixel2 = dilatedBitmap.GetPixel(x + a, y + b);
-
-                            int dilatedRedColorValue = pixel2.R;
-                            int dilatedGreenColorValue = pixel2.G;
-                            int dilatedBlueColorValue = pixel2.B;
-
-                            int newRedColorValue = dilatedRedColorValue / initialRedColorValue;
-                            int newGreenColorValue = dilatedGreenColorValue / initialGreenColorValue;
-                            int newBlueColorValue = dilatedBlueColorValue / initialBlueColorValue;
-
-                            newBitmap.SetPixel(x, y, Color.FromArgb(
-                                Math.Clamp(newRedColorValue, 0, 255),
-                                Math.Clamp(newGreenColorValue, 0, 255),
-                                Math.Clamp(newBlueColorValue, 0, 255)
-                                )
-                            );
-                        }
-                    }
-                }
-            }
-
-            return newBitmap;
-
-        }
-
-        public Bitmap ApplyM1Operation2(Bitmap bitmap, int maskNumber)
-        {
-            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            Bitmap erosedBitmap = ApplyErosion(bitmap, maskNumber);
-            int[,] mask = GetMask(maskNumber);
-
-            for (int x = 1; x < bitmap.Width - 1; x++)
-            {
-                for (int y = 1; y < bitmap.Height - 1; y++)
-                {
-                    for (int a = -1; a < 2; a++)
-                    {
-                        for (int b = -1; b < 2; b++)
-                        {
-                            if (mask[a + 1, b + 1] == -1)
-                            {
-                                continue;
-                            }
-
-                            Color pixel = erosedBitmap.GetPixel(x + a, y + b);
-
-                            int erosedRedColorValue = pixel.R;
-                            int erosedlGreenColorValue = pixel.G;
-                            int erosedBlueColorValue = pixel.B;
-
-                            if (erosedRedColorValue == 0 || erosedlGreenColorValue == 0 || erosedBlueColorValue == 0)
-                            {
-                                erosedRedColorValue = 1;
-                                erosedlGreenColorValue = 1;
-                                erosedBlueColorValue = 1;
-                            }
-
-                            Color pixel2 = bitmap.GetPixel(x + a, y + b);
-
-                            int initialRedColorValue = pixel2.R;
-                            int initialGreenColorValue = pixel2.G;
-                            int initialBlueColorValue = pixel2.B;
-
-                            int newRedColorValue = initialRedColorValue / erosedRedColorValue;
-                            int newGreenColorValue = initialGreenColorValue / erosedlGreenColorValue;
-                            int newBlueColorValue = initialBlueColorValue / erosedBlueColorValue;
-
-                            newBitmap.SetPixel(x, y, Color.FromArgb(
-                                Math.Clamp(newRedColorValue, 0, 255),
-                                Math.Clamp(newGreenColorValue, 0, 255),
-                                Math.Clamp(newBlueColorValue, 0, 255)
-                                )
-                            );
-                        }
-                    }
-                }
-            }
-
-            return newBitmap;
-        }
-
-        public Bitmap ApplyM1Operation3(Bitmap bitmap, int maskNumber)
-        {
-            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
-            Bitmap dilatedBitmap = ApplyDilation(bitmap, maskNumber);
-            Bitmap erosedBitmap = ApplyErosion(bitmap, maskNumber);
-            int[,] mask = GetMask(maskNumber);
-
-            for (int x = 1; x < bitmap.Width - 1; x++)
-            {
-                for (int y = 1; y < bitmap.Height - 1; y++)
-                {
-                    for (int a = -1; a < 2; a++)
-                    {
-                        for (int b = -1; b < 2; b++)
-                        {
-                            if (mask[a + 1, b + 1] == -1)
-                            {
-                                continue;
-                            }
-
-                            Color pixel = erosedBitmap.GetPixel(x + a, y + b);
-
-                            int erosedRedColorValue = pixel.R;
-                            int erosedGreenColorValue = pixel.G;
-                            int erosedBlueColorValue = pixel.B;
-
-                            if (erosedRedColorValue == 0 || erosedGreenColorValue == 0 || erosedBlueColorValue == 0)
-                            {
-                                erosedRedColorValue = 1;
-                                erosedGreenColorValue = 1;
-                                erosedBlueColorValue = 1;
-                            }
-
-                            Color pixel2 = dilatedBitmap.GetPixel(x + a, y + b);
-
-                            int dilatedRedColorValue = pixel2.R;
-                            int dilatedGreenColorValue = pixel2.G;
-                            int dilatedBlueColorValue = pixel2.B;
-
-                            int newRedColorValue = dilatedRedColorValue / erosedRedColorValue;
-                            int newGreenColorValue = dilatedGreenColorValue / erosedGreenColorValue;
-                            int newBlueColorValue = dilatedBlueColorValue / erosedBlueColorValue;
-
-                            newBitmap.SetPixel(x, y, Color.FromArgb(
-                                Math.Clamp(newRedColorValue, 0, 255),
-                                Math.Clamp(newGreenColorValue, 0, 255),
-                                Math.Clamp(newBlueColorValue, 0, 255)
-                                )
-                            );
-                        }
-                    }
-                }
-            }
-
-            return newBitmap;
-        }
-
-        public Bitmap ApplyMerging(Bitmap bitmap1, Bitmap bitmap2)
+        public Bitmap ApplyM1Operation(Bitmap bitmap1, Bitmap bitmap2, int maskNumber)
         {
             Bitmap newBitmap = new Bitmap(bitmap1.Width, bitmap1.Height);
+            int[,] mask = GetMask(maskNumber);
+
+            for (int x = 1; x < bitmap1.Width - 1; x++)
+            {
+                for (int y = 1; y < bitmap1.Height - 1; y++)
+                {
+                    for (int a = -1; a < 2; a++)
+                    {
+                        for (int b = -1; b < 2; b++)
+                        {
+                            if (mask[a + 1, b + 1] == -1)
+                            {
+                                continue;
+                            }
+
+                            Color pixel2 = bitmap2.GetPixel(x + a, y + b);
+
+                            int redColorValue2 = pixel2.R;
+                            int greenColorValue2 = pixel2.G;
+                            int blueColorValue2 = pixel2.B;
+
+                            if (redColorValue2 == 0 || greenColorValue2 == 0 || blueColorValue2 == 0)
+                            {
+                                redColorValue2 = 1;
+                                greenColorValue2 = 1;
+                                blueColorValue2 = 1;
+                            }
+
+                            Color pixel1 = bitmap1.GetPixel(x + a, y + b);
+
+                            int redColorValue1 = pixel1.R;
+                            int greenColorValue1 = pixel1.G;
+                            int blueColorValue1 = pixel1.B;
+
+                            int newRedColorValue = redColorValue1 / redColorValue2;
+                            int newGreenColorValue = greenColorValue1 / greenColorValue2;
+                            int newBlueColorValue = blueColorValue1 / blueColorValue2;
+
+                            newBitmap.SetPixel(x, y, Color.FromArgb(
+                                Math.Clamp(newRedColorValue, 0, 255),
+                                Math.Clamp(newGreenColorValue, 0, 255),
+                                Math.Clamp(newBlueColorValue, 0, 255)
+                                )
+                            );
+                        }
+                    }
+                }
+            }
+
+            return newBitmap;
+
+        }
+
+        public Bitmap ApplyMerging(Bitmap bitmap, int x, int y, int threshold)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            Stack<Point> pointStack = new Stack<Point>();
+
+            bool[,] checkedPoints = new bool[bitmap.Width, bitmap.Height];
+            int maxPixelValue = Math.Clamp(bitmap.GetPixel(x, y).R + threshold, 0, 255);
+            int minPixelValue = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
+
+            pointStack.Push(new Point(x, y));
+
+            while (true)
+            {
+                if (pointStack.Count == 0)
+                {
+                    break;
+                }
+
+                Point point = pointStack.Pop();
+
+                if (point.X >= 0 && point.X < bitmap.Width &&
+                    point.Y >= 0 && point.Y < bitmap.Height &&
+                    !checkedPoints[point.X, point.Y])
+                {
+                    checkedPoints[point.X, point.Y] = true;
+
+                    if (bitmap.GetPixel(point.X, point.Y).R >= minPixelValue && 
+                        bitmap.GetPixel(point.X, point.Y).R < maxPixelValue)
+                    {
+                        newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(0, 0, 0));
+
+                        pointStack.Push(new Point(point.X, point.Y - 1));
+                        pointStack.Push(new Point(point.X, point.Y + 1));
+                        pointStack.Push(new Point(point.X - 1, point.Y));
+                        pointStack.Push(new Point(point.X + 1, point.Y));
+                    }
+                }
+            }
 
             return newBitmap;
         }
