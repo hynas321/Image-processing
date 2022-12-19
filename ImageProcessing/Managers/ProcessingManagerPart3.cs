@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks;
 
 namespace Image_processing.Managers
 {
@@ -124,7 +125,7 @@ namespace Image_processing.Managers
                                 continue;
                             }
 
-                            if (mask[a + 1, b + 1] * 255 != bitmap.GetPixel(x + a, y + b).R)
+                            if (mask[a + 1, b + 1] != bitmap.GetPixel(x + a, y + b).R / 255)
                             {
                                 Hmt = false;
                             }
@@ -208,8 +209,12 @@ namespace Image_processing.Managers
             Stack<Point> pointStack = new Stack<Point>();
 
             bool[,] checkedPoints = new bool[bitmap.Width, bitmap.Height];
-            int maxPixelValue = Math.Clamp(bitmap.GetPixel(x, y).R + threshold, 0, 255);
-            int minPixelValue = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
+            int maxPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R + threshold, 0, 255);
+            int maxPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).G + threshold, 0, 255);
+            int maxPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).B + threshold, 0, 255);
+            int minPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
+            int minPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
+            int minPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
 
             pointStack.Push(new Point(x, y));
 
@@ -228,16 +233,24 @@ namespace Image_processing.Managers
                 {
                     checkedPoints[point.X, point.Y] = true;
 
-                    if (bitmap.GetPixel(point.X, point.Y).R >= minPixelValue && 
-                        bitmap.GetPixel(point.X, point.Y).R < maxPixelValue)
+                    if (bitmap.GetPixel(point.X, point.Y).R >= minPixelValueR &&
+                        bitmap.GetPixel(point.X, point.Y).G >= minPixelValueG &&
+                        bitmap.GetPixel(point.X, point.Y).B >= minPixelValueB &&
+                        bitmap.GetPixel(point.X, point.Y).R < maxPixelValueR &&
+                        bitmap.GetPixel(point.X, point.Y).G < maxPixelValueG &&
+                        bitmap.GetPixel(point.X, point.Y).B < maxPixelValueB)
                     {
-                        newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(0, 0, 0));
+                        newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(255, 255, 255));
 
                         pointStack.Push(new Point(point.X, point.Y - 1));
                         pointStack.Push(new Point(point.X, point.Y + 1));
                         pointStack.Push(new Point(point.X - 1, point.Y));
                         pointStack.Push(new Point(point.X + 1, point.Y));
                     }
+                }
+                else
+                {
+                    bitmap.SetPixel(point.X, point.Y, Color.FromArgb(0, 0, 0));
                 }
             }
 
@@ -320,6 +333,7 @@ namespace Image_processing.Managers
                         { -1,  1, -1 },
                         { -1, -1, -1 }
                     };
+                //XI
                 case 11:
                     return new int[,]
                     {
@@ -330,9 +344,52 @@ namespace Image_processing.Managers
                 case 12:
                     return new int[,]
                     {
+                        {  1,  1,  1 },
+                        { -1,  0, -1 },
+                        { -1, -1, -1 }
+                    };
+                case 13:
+                    return new int[,]
+                    {
+                        { -1, -1,  1 },
+                        { -1,  0,  1 },
+                        { -1, -1,  1 }
+                    };
+                case 14:
+                    return new int[,]
+                    {
+                        { -1, -1, -1 },
+                        { -1,  0, -1 },
+                        {  1,  1,  1 }
+                    };
+                //XII
+                case 15:
+                    return new int[,]
+                    {
                         {  0,  0,  0 },
                         { -1,  1, -1 },
                         {  1,  1,  1 }
+                    };
+                case 16:
+                    return new int[,]
+                    {
+                        { -1,  0,  0 },
+                        {  1,  1,  0 },
+                        {  1,  1, -1 }
+                    };
+                case 17:
+                    return new int[,]
+                    {
+                        { 1,  -1,  0 },
+                        { 1,   1,  0 },
+                        { 1,  -1,  0 }
+                    };
+                case 18:
+                    return new int[,]
+                    {
+                        {  1,  1, -1 },
+                        {  1,  1,  0 },
+                        { -1,  0,  0 }
                     };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(maskNumber));
