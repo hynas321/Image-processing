@@ -482,7 +482,7 @@ namespace Image_processing.Managers
         }
 
         #region H (histogram calculation algorithm)
-        public static Bitmap ManageRaleigh(this Bitmap bitmap, double alpha, int minBrightness)
+        public static Bitmap ManageRaleigh(this Bitmap bitmap, int minBrightness, int maxBrightness)
         {
             int[] redColorHistogramValues = GetHistogramChannelValues(bitmap, 'R');
             int[] greenColorHistogramValues = GetHistogramChannelValues(bitmap, 'G');
@@ -494,9 +494,9 @@ namespace Image_processing.Managers
 
             for (int i = 0; i < 256; i++)
             {
-                redColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, redColorHistogramValues, minBrightness);
-                greenColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, greenColorHistogramValues, minBrightness);
-                blueColorNewBrightness[i] = bitmap.CalculateMinInputBrightness(i, alpha, blueColorHistogramValues, minBrightness);
+                redColorNewBrightness[i] = bitmap.ApplyRaleighToPixel(i, minBrightness, maxBrightness, redColorHistogramValues);
+                greenColorNewBrightness[i] = bitmap.ApplyRaleighToPixel(i, minBrightness, maxBrightness, greenColorHistogramValues);
+                blueColorNewBrightness[i] = bitmap.ApplyRaleighToPixel(i, minBrightness, maxBrightness, blueColorHistogramValues);
             }
 
             for (int x = 0; x < bitmap.Width; x++)
@@ -778,18 +778,19 @@ namespace Image_processing.Managers
         return colorValues;
         }
 
-        private static int CalculateMinInputBrightness(this Bitmap bitmap, int f, double alpha, int[] histogramValues, int minBrightness)
+        private static int ApplyRaleighToPixel(this Bitmap bitmap, int f, int minBrightness, int maxBrightness, int[] histogramValues)
         {
+            int res = bitmap.Width * bitmap.Height;
+            double alpha = (maxBrightness - minBrightness) / Math.Sqrt(2 * Math.Log(res));
             int histogramValuesSum = 0;
-            int resolution = bitmap.Width * bitmap.Height;
 
-            for (int N = 0; N < f; N++)
+            for (int N = 0; N <= f; N++)
             {
                 histogramValuesSum += histogramValues[N];
             }
 
             int value = (int)Math.Pow(
-                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)1 / (resolution) * histogramValuesSum))),
+                (double)(2 * Math.Pow(alpha, 2) * Math.Log(1 / ((double)histogramValuesSum / res))),
                 0.5
              );
 

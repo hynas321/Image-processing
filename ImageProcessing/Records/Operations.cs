@@ -80,7 +80,7 @@
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
             {$"filename {Histogram} charValue (R, G or B)", ""},
-            {$"filename {RaleighFinalProbabilityDensityFunction} doubleValue (alpha) intValue (min brightness)", ""},
+            {$"filename {RaleighFinalProbabilityDensityFunction} intValue (min brightness) intValue (max brightness)", ""},
             {$"filename {Mean} charValue (R, G or B)", "Calculates mean"},
             {$"filename {Variance} charValue (R, G or B)", "Calculates variance"},
             {$"filename {StandardDeviation} charValue (R, G or B)", "Calculates standard deviation"},

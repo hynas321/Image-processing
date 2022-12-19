@@ -237,10 +237,10 @@ namespace Image_processing
                         );
                     }
                 }
-                //filename --operation doubleValue intValue
+                //filename --operation intValue intValue
                 else if (args.Length == 4 && args[1].StartsWith("--") 
-                    && double.TryParse(args[2], out double alpha)
-                    && int.TryParse(args[3], out int minBrightness))
+                    && int.TryParse(args[2], out int minBrightness)
+                    && int.TryParse(args[3], out int maxBrightness))
                 {
                     string filename = args[0];
                     string operation = args[1];
@@ -250,7 +250,7 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
-                            bitmap = bitmap.ManageRaleigh(alpha, minBrightness);
+                            bitmap = bitmap.ManageRaleigh(minBrightness, maxBrightness);
                             break;
                         default:
                             throw new CommandException(
