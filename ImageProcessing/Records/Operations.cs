@@ -112,14 +112,14 @@
             {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
             {$"filename {SobelOperator}", "Applies sobel operator"},
             {$"*PART3*", ""},
-            {$"filename {Dilation} intValue (1-12)", "Applies dilation operation for a chosen mask"},
-            {$"filename {Erosion} intValue (1-12)", "Applies erosion operation for a chosen mask"},
-            {$"filename {Opening} intValue (1-12)", "Applies opening operation for a chosen mask"},
-            {$"filename {Closing} intValue (1-12)", "Applies closing operation for a chosen mask"},
-            {$"filename {Hmt} intValue (1-12)", "Applies HMT operation for a chosen mask"},
-            {$"filename {M1Operation1} intValue (1-12)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
-            {$"filename {M1Operation2} intValue (1-12)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
-            {$"filename {M1Operation3} intValue (1-12)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
+            {$"filename {Dilation} intValue (1-18)", "Applies dilation operation for a chosen mask"},
+            {$"filename {Erosion} intValue (1-18)", "Applies erosion operation for a chosen mask"},
+            {$"filename {Opening} intValue (1-18)", "Applies opening operation for a chosen mask"},
+            {$"filename {Closing} intValue (1-18)", "Applies closing operation for a chosen mask"},
+            {$"filename {Hmt} intValue (1-18)", "Applies HMT operation for a chosen mask"},
+            {$"filename {M1Operation1} intValue (1-18)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
+            {$"filename {M1Operation2} intValue (1-18)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
+            {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
             {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"}
         };
     }
