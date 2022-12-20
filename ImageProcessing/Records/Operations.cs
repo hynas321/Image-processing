@@ -61,9 +61,27 @@
         #endregion
         #endregion
 
+        #region Task 3
+        #region M (morphological operations)
+        public const string Dilation = "--dilation";
+        public const string Erosion = "--erosion";
+        public const string Opening = "--opening";
+        public const string Closing = "--closing";
+        public const string Hmt = "--hmt";
+        public const string M1Operation1 = "--m1op1";
+        public const string M1Operation2 = "--m1op2";
+        public const string M1Operation3 = "--m1op3";
+        #endregion
+
+        #region R (image segmentation)
+        public const string Merging = "--merging";
+        #endregion
+        #endregion
+
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
+            {$"*PART1*", ""},
             {$"filename {BrightnessModification} intValue", "Modifies image's brightness by the given value"},
             {$"filename {ContrastModification} intValue", "Modifies image's contrast by the given value"},
             {$"filename {Negative}", "Negates an image"},
@@ -79,6 +97,7 @@
             {$"filename filename {SignalToNoiseRatio}", "Calculates signal to noise ratio"},
             {$"filename filename {PeakSignalToNoiseRatio}", "Calculates peak signal to noise ratio"},
             {$"filename filename {MaximumDifference}", "Calculates maximum difference"},
+            {$"*PART2*", ""},
             {$"filename {Histogram} charValue (R, G or B)", ""},
             {$"filename {RaleighFinalProbabilityDensityFunction} intValue (min brightness) intValue (max brightness)", ""},
             {$"filename {Mean} charValue (R, G or B)", "Calculates mean"},
@@ -91,7 +110,17 @@
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
             {$"filename {ExtractionOfDetailsI} intValue (1, 2, 3, 4), masks: N, NE, SE, S", "Applies extraction of details"},
             {$"filename {ExtractionOfDetailsIOptimized}", "Applies optimized extraction of details for the N mask"},
-            {$"filename {SobelOperator}", "Applies sobel operator"}
+            {$"filename {SobelOperator}", "Applies sobel operator"},
+            {$"*PART3*", ""},
+            {$"filename {Dilation} intValue (1-18)", "Applies dilation operation for a chosen mask"},
+            {$"filename {Erosion} intValue (1-18)", "Applies erosion operation for a chosen mask"},
+            {$"filename {Opening} intValue (1-18)", "Applies opening operation for a chosen mask"},
+            {$"filename {Closing} intValue (1-18)", "Applies closing operation for a chosen mask"},
+            {$"filename {Hmt} intValue (1-18)", "Applies HMT operation for a chosen mask"},
+            {$"filename {M1Operation1} intValue (1-18)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
+            {$"filename {M1Operation2} intValue (1-18)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
+            {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
+            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"}
         };
     }
 }

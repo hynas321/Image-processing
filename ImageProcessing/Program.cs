@@ -11,6 +11,7 @@ namespace Image_processing
     {
         private static FileManager? fileManager;
         private static Stopwatch stopWatch = new Stopwatch();
+        private static ProcessingManager processingManager = new ProcessingManager();
 
         static void Main(string[] args)
         {
@@ -49,8 +50,6 @@ namespace Image_processing
                     Environment.Exit(0);
                 }
 
-
-
                 //filename --operation
                 if (args.Length == 2 && args[1].StartsWith("--"))
                 {
@@ -62,22 +61,22 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.Negative:
-                            bitmap = bitmap.ManageNegative();
+                            bitmap = processingManager.ApplyNegative(bitmap);
                             break;
                         case Operations.HorizontalFlip:
-                            bitmap = bitmap.ManageHorizontalFlip();
+                            bitmap = processingManager.ApplyHorizontalFlip(bitmap);
                             break;
                         case Operations.VerticalFlip:
-                            bitmap = bitmap.ManageVerticalFlip();
+                            bitmap = processingManager.ApplyVerticalFlip(bitmap);
                             break;
                         case Operations.DiagonalFlip:
-                            bitmap = bitmap.ManageDiagonalFlip();
+                            bitmap = processingManager.ApplyDiagonalFlip(bitmap);
                             break;
                         case Operations.ExtractionOfDetailsIOptimized:
-                            bitmap = bitmap.ManageExtractionOfDetailsIOptimized();
+                            bitmap = processingManager.ApplyExtractionOfDetailsIOptimized(bitmap);
                             break;
                         case Operations.SobelOperator:
-                            bitmap = bitmap.ManageSobelOperator();
+                            bitmap = processingManager.ApplySobelOperator(bitmap);
                             break;
                         default:
                             throw new CommandException(
@@ -102,25 +101,49 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.BrightnessModification:
-                            bitmap = bitmap.ManageBrightnessModification((int)value);
+                            bitmap = processingManager.ApplyBrightnessModification(bitmap, value);
                             break;
                         case Operations.ContrastModification:
-                            bitmap = bitmap.ManageContrastModification(value);
+                            bitmap = processingManager.ApplyContrastModification(bitmap, value);
                             break;
                         case Operations.ImageShrinking:
-                            bitmap = bitmap.ManageImageShrinking((int)value);
+                            bitmap = processingManager.ApplyImageShrinking(bitmap, value);
                             break;
                         case Operations.ImageEnlargement:
-                            bitmap = bitmap.ManageImageEnlargement((int)value);
+                            bitmap = processingManager.ApplyImageEnlargement(bitmap, value);
                             break;
                         case Operations.MidpointFilter:
-                            bitmap = bitmap.ManageMidpointFilter((int)value);
+                            bitmap = processingManager.ApplyMidpointFilter(bitmap, value);
                             break;
                         case Operations.ArithmeticMeanFilter:
-                            bitmap = bitmap.ManageArithmeticMeanFilter((int)value);
+                            bitmap = processingManager.ApplyArithmeticMeanFilter(bitmap, value);
                             break;
                         case Operations.ExtractionOfDetailsI:
-                            bitmap = bitmap.ManageExtractionOfDetailsI(value);
+                            bitmap = processingManager.ApplyExtractionOfDetailsI(bitmap, value);
+                            break;
+                        case Operations.Dilation:
+                            bitmap = processingManager.ApplyDilation(bitmap, value);
+                            break;
+                        case Operations.Erosion:
+                            bitmap = processingManager.ApplyErosion(bitmap, value);
+                            break;
+                        case Operations.Opening:
+                            bitmap = processingManager.ApplyOpening(bitmap, value);
+                            break;
+                        case Operations.Closing:
+                            bitmap = processingManager.ApplyClosing(bitmap, value);
+                            break;
+                        case Operations.Hmt:
+                            bitmap = processingManager.ApplyHmt(bitmap, value);
+                            break;
+                        case Operations.M1Operation1:
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), bitmap, value);
+                            break;
+                        case Operations.M1Operation2:
+                            bitmap = processingManager.ApplyM1Operation(bitmap, processingManager.ApplyErosion(bitmap, value), value);
+                            break;
+                        case Operations.M1Operation3:
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), processingManager.ApplyErosion(bitmap, value), value);
                             break;
                         default:
                             throw new CommandException(
@@ -129,7 +152,7 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, value);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
@@ -148,19 +171,19 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.MeanSquareError:
-                            resultToDisplay = ProcessingManager.CalculateMeanSquareError(bitmap1, bitmap2);
+                            resultToDisplay = processingManager.CalculateMeanSquareError(bitmap1, bitmap2);
                             break;
                         case Operations.PeakMeanSquareError:
-                            resultToDisplay = ProcessingManager.CalculatePeakMeanSquareError(bitmap1, bitmap2);
+                            resultToDisplay = processingManager.CalculatePeakMeanSquareError(bitmap1, bitmap2);
                             break;
                         case Operations.SignalToNoiseRatio:
-                            resultToDisplay = ProcessingManager.CalculateSignalToNoiseRatio(bitmap1, bitmap2);
+                            resultToDisplay = processingManager.CalculateSignalToNoiseRatio(bitmap1, bitmap2);
                             break;
                         case Operations.PeakSignalToNoiseRatio:
-                            resultToDisplay = ProcessingManager.CalculatePeakSignalToNoiseRatio(bitmap1, bitmap2);
+                            resultToDisplay = processingManager.CalculatePeakSignalToNoiseRatio(bitmap1, bitmap2);
                             break;
                         case Operations.MaximumDifference:
-                            resultToDisplay = ProcessingManager.CalculateMaximumDifference(bitmap1, bitmap2);
+                            resultToDisplay = processingManager.CalculateMaximumDifference(bitmap1, bitmap2);
                             break;
                         default:
                             throw new CommandException(
@@ -190,32 +213,32 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.Histogram:
-                            plot = ProcessingManager.CreateHistogramImage(bitmap, color);
+                            plot = processingManager.CreateHistogramImage(bitmap, color);
                             histogramPlot = true;
                             break;
                         case Operations.Mean:
-                            resultToDisplay = ProcessingManager.CalculateMean(bitmap, color);
+                            resultToDisplay = processingManager.CalculateMean(bitmap, color);
                             break;
                         case Operations.Variance:
-                            resultToDisplay = ProcessingManager.CalculateVariance(bitmap, color);
+                            resultToDisplay = processingManager.CalculateVariance(bitmap, color);
                             break;
                         case Operations.StandardDeviation:
-                            resultToDisplay = ProcessingManager.CalculateStandardDeviation(bitmap, color);
+                            resultToDisplay = processingManager.CalculateStandardDeviation(bitmap, color);
                             break;
                         case Operations.VariationCoefficientI:
-                            resultToDisplay = ProcessingManager.CalculateVariationCoefficientI(bitmap, color);
+                            resultToDisplay = processingManager.CalculateVariationCoefficientI(bitmap, color);
                             break;
                         case Operations.AsymmetryCoefficient:
-                            resultToDisplay = ProcessingManager.CalculateAsymmetryCoefficient(bitmap, color);
+                            resultToDisplay = processingManager.CalculateAsymmetryCoefficient(bitmap, color);
                             break;
                         case Operations.FlatteningCoefficient:
-                            resultToDisplay = ProcessingManager.CalculateFlatteningCoefficient(bitmap, color);
+                            resultToDisplay = processingManager.CalculateFlatteningCoefficient(bitmap, color);
                             break;
                         case Operations.VariationCoefficientII:
-                            resultToDisplay = ProcessingManager.CalculateVariationCoefficientII(bitmap, color);
+                            resultToDisplay = processingManager.CalculateVariationCoefficientII(bitmap, color);
                             break;
                         case Operations.InformationSourceEntropy:
-                            resultToDisplay = ProcessingManager.CalculateInformationSourceEntropy(bitmap, color);
+                            resultToDisplay = processingManager.CalculateInformationSourceEntropy(bitmap, color);
                             break;
                         default:
                             throw new CommandException(
@@ -250,7 +273,34 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
-                            bitmap = bitmap.ManageRaleigh(minBrightness, maxBrightness);
+                            bitmap = processingManager.ApplyRaleigh(bitmap, minBrightness, maxBrightness);
+                            break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, minBrightness, maxBrightness);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
+                //filename --operation intValue intValue intValue
+                else if (args.Length == 5 && args[1].StartsWith("--")
+                    && int.TryParse(args[2], out int x)
+                    && int.TryParse(args[3], out int y)
+                    && int.TryParse(args[4], out int threshold))
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+
+                    switch (operation)
+                    {
+                        case Operations.Merging:
+                            bitmap = processingManager.ApplyMerging(bitmap, x, y, threshold);
                             break;
                         default:
                             throw new CommandException(

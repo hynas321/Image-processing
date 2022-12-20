@@ -20,7 +20,7 @@ namespace Image_processing.Managers
 
         public static void DisplayCommandExecutedSuccesfullyMessage(string command)
         {
-            ConsoleManager.WriteLineWithForegroundColor(
+            WriteLineWithForegroundColor(
                 $"Command \"{command}\" has been executed successfully.",
                 ConsoleColor.Green
             );
@@ -28,7 +28,7 @@ namespace Image_processing.Managers
 
         public static void DisplayHelpInformationMessage()
         {
-            ConsoleManager.WriteLineWithForegroundColor(
+            WriteLineWithForegroundColor(
                 $"Run program with \"--help\" parameter to see all available commands with description",
                 ConsoleColor.Yellow
             );
