@@ -78,6 +78,25 @@
         #endregion
         #endregion
 
+        #region Task 4
+        #region Fourier Transform
+        public const string SlowFourierTransform = "--sft";
+        public const string InverseSlowFourierTransform = "--isft";
+        public const string FastFourierTransform = "--fft";
+        public const string InverseFastFourierTransform = "--ifft";
+        #endregion
+
+        #region Filters in frequency domain
+        public const string LowPassFilter = "--lowpass";
+        public const string HighPassFilter = "--highpass";
+        public const string BandPassFilter = "--bandpass";
+        public const string BandCutFilter = "--bandcut";
+        public const string HighPassWithEdgeDirection = "--edgehighpass";
+        public const string PhaseModifyingFilter = "--phase";
+        #endregion
+
+        #endregion
+
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
@@ -105,7 +124,7 @@
             {$"filename {StandardDeviation} charValue (R, G or B)", "Calculates standard deviation"},
             {$"filename {VariationCoefficientI} charValue (R, G or B)", "Calculates variation coefficient I"},
             {$"filename {AsymmetryCoefficient} charValue (R, G or B)", "Calculates asymmetry coefficient"},
-            {$"filename {FlatteningCoefficient} charValye (R, G or B)", "Calculates flattening coefficient" },
+            {$"filename {FlatteningCoefficient} charValue (R, G or B)", "Calculates flattening coefficient" },
             {$"filename {VariationCoefficientII} charValue (R, G or B)", "Calculates variation coefficient II"},
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
             {$"filename {ExtractionOfDetailsI} intValue (1, 2, 3, 4), masks: N, NE, SE, S", "Applies extraction of details"},
@@ -120,7 +139,19 @@
             {$"filename {M1Operation1} intValue (1-18)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
             {$"filename {M1Operation2} intValue (1-18)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
             {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
-            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"}
+            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"},
+            {$"*PART4*", ""},
+            {$"filename ", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+            {"", ""},
+
         };
     }
 }

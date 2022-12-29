@@ -78,6 +78,18 @@ namespace Image_processing
                         case Operations.SobelOperator:
                             bitmap = processingManager.ApplySobelOperator(bitmap);
                             break;
+                        case Operations.SlowFourierTransform:
+                            bitmap = processingManager.ApplySlowFourierTransform(bitmap).bitmap;
+                            break;
+                        case Operations.InverseSlowFourierTransform:
+                            bitmap = processingManager.ApplyInverseSlowFourierTransform(bitmap);
+                            break;
+                        case Operations.FastFourierTransform:
+                            bitmap = processingManager.ApplyFastFourierTransform(bitmap).bitmap;
+                            break;
+                        case Operations.InverseFastFourierTransform:
+                            bitmap = processingManager.ApplyInverseFastFourierTransform(bitmap);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -323,7 +335,7 @@ namespace Image_processing
 
                 stopWatch.Stop();
 
-                Console.WriteLine($"Time elapsed: {stopWatch.ElapsedMilliseconds}ms");
+                ConsoleManager.WriteLineWithForegroundColor($"Time elapsed: {stopWatch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
             }
             catch (Exception ex)
             {

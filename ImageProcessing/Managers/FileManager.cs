@@ -1,5 +1,7 @@
 ﻿using ScottPlot;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Image_processing.Managers
@@ -65,7 +67,7 @@ namespace Image_processing.Managers
                         = $"{DateTime.Now:dd-MM-yy_HH-mm-ss}_{operation.TrimStart('-')}_{file}";
                 }
 
-                bitmap.Save($@"{modifiedImagesFolderPath}\{file}");
+                bitmap.Save($@"{modifiedImagesFolderPath}\{file}", ImageFormat.Bmp);
 
                 FileInfo fInfo = new FileInfo($@"{modifiedImagesFolderPath}\{file}");
                 fInfo.MoveTo($@"{modifiedImagesFolderPath}\{savedFile}");
