@@ -226,6 +226,59 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
+        public Bitmap ApplyInverseFastFourierTransform(List<List<Complex>> fourierTransformComplexNumbers)
+        {
+            Bitmap newBitmap = new Bitmap(fourierTransformComplexNumbers[0].Count, fourierTransformComplexNumbers.Count);
+            List<List<Complex>> values = new List<List<Complex>>();
+
+            for (int x = 0; x < newBitmap.Height; x++)
+            {
+                values.Add(new List<Complex>());
+            }
+
+            for (int y = 0; y < newBitmap.Height; y++)
+            {
+                List<Complex> rows = new List<Complex>();
+
+                for (int x = 0; x < newBitmap.Width; x++)
+                {
+                    rows.Add(fourierTransformComplexNumbers[y][x]);
+                }
+
+                rows = ApplyInverseFastFourierTransform1D(rows);
+
+                for (int x = 0; x < newBitmap.Width; x++)
+                {
+                    values[y].Add(rows[x] / newBitmap.Width);
+                }
+            }
+
+            for (int x = 0; x < newBitmap.Width; x++)
+            {
+                List<Complex> columns = new List<Complex>();
+
+                for (int y = 0; y < newBitmap.Width; y++)
+                {
+                    columns.Add(values[y][x]);
+                }
+
+                columns = ApplyInverseFastFourierTransform1D(columns);
+
+                for (int y = 0; y < newBitmap.Height; y++)
+                {
+                    int color = (int)Math.Clamp(Math.Abs(columns[y].Magnitude / newBitmap.Width), 0, 255);
+                    Color pixel = Color.FromArgb(1, color, color, color);
+
+                    newBitmap.SetPixel(x, y, pixel);
+                }
+            }
+
+            newBitmap = ApplyVerticalFlip(newBitmap);
+            newBitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+            return newBitmap;
+        }
+
         public Bitmap ApplyFourierSpectrumVisualization(List<List<Complex>> image)
         {
             Bitmap visualizationImage = new Bitmap(image[0].Count, image.Count);
@@ -353,6 +406,102 @@ namespace Image_processing.Managers
             }
 
             return complexNumbersResult;
+        }
+
+        public Bitmap ApplyLowPassFilter(Bitmap bitmap, int threshold)
+        {
+            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
+
+            for (int r = 0; r < complexNumbers.Count; r++)
+            {
+                for (int i = 0; i < complexNumbers[0].Count; i++)
+                {
+                    double value = Math.Sqrt(
+                        Math.Pow(r - complexNumbers.Count / 2.0, 2) +
+                        Math.Pow(i - complexNumbers[0].Count / 2.0, 2)
+                    );
+
+                    if (value > 0 + threshold)
+                    {
+                        complexNumbers[r][i] = new Complex(0, 0);
+                    }
+                }
+            }
+
+            return ApplyInverseFastFourierTransform(complexNumbers);
+        }
+
+        public Bitmap ApplyHighPassFilter(Bitmap bitmap, int threshold)
+        {
+            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
+
+            for (int r = 0; r < complexNumbers.Count; r++)
+            {
+                for (int i = 0; i < complexNumbers[0].Count; i++)
+                {
+                    double value = Math.Sqrt(
+                        Math.Pow(r - complexNumbers.Count / 2.0, 2) +
+                        Math.Pow(i - complexNumbers[0].Count / 2.0, 2)
+                    );
+
+                    if (value <= 255 + threshold)
+                    {
+                        complexNumbers[r][i] = new Complex(0, 0);
+                    }
+                }
+            }
+
+            return ApplyInverseFastFourierTransform(complexNumbers);
+        }
+
+        public Bitmap ApplyBandPassFilter(Bitmap bitmap, int threshold)
+        {
+            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
+
+            Complex dc = complexNumbers[complexNumbers.Count / 2][complexNumbers[0].Count / 2];
+
+            for (int r = 0; r < complexNumbers.Count; r++)
+            {
+                for (int i = 0; i < complexNumbers[0].Count; i++)
+                {
+                    double value = Math.Sqrt(
+                        Math.Pow(r - complexNumbers.Count / 2.0, 2) +
+                        Math.Pow(i - complexNumbers[0].Count / 2.0, 2)
+                    );
+
+                    if ((value > 255 + threshold) || (value < 0 + threshold))
+                    {
+                        complexNumbers[r][i] = new Complex(0d, 0d);
+                    }
+                }
+            }
+
+            complexNumbers[complexNumbers.Count / 2][complexNumbers[0].Count / 2] = dc;
+
+            return ApplyInverseFastFourierTransform(complexNumbers);
+        }
+
+        public Bitmap ApplyBandCutFilter(Bitmap bitmap, int threshold)
+        {
+            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
+
+            for (int r = 0; r < complexNumbers.Count; r++)
+            {
+                for (int i = 0; i < complexNumbers[0].Count; i++)
+                {
+                    double value = Math.Sqrt(
+                        Math.Pow(r - complexNumbers.Count / 2.0, 2) +
+                        Math.Pow(i - complexNumbers[0].Count / 2.0, 2)
+                    );
+
+                    if ((value <= 255 + threshold) || (value >= 0 + threshold))
+                    {
+                        complexNumbers[r][i] = new Complex(0d, 0d);
+                    }
+                }
+            }
+
+            return ApplyInverseFastFourierTransform(complexNumbers);
         }
     }
 }

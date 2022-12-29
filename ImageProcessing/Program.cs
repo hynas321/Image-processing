@@ -157,6 +157,15 @@ namespace Image_processing
                         case Operations.M1Operation3:
                             bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), processingManager.ApplyErosion(bitmap, value), value);
                             break;
+                        case Operations.LowPassFilter:
+                            bitmap = processingManager.ApplyLowPassFilter(bitmap, value);
+                            break;
+                        case Operations.HighPassFilter:
+                            bitmap = processingManager.ApplyHighPassFilter(bitmap, value);
+                            break;
+                        case Operations.BandPassFilter:
+                            bitmap = processingManager.ApplyBandPassFilter(bitmap, value);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +

@@ -141,17 +141,6 @@
             {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
             {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"},
             {$"*PART4*", ""},
-            {$"filename ", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-            {"", ""},
-
         };
     }
 }
