@@ -141,6 +141,16 @@
             {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
             {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"},
             {$"*PART4*", ""},
+            {$"filename {SlowFourierTransform}", "Applies slow Fourier Transform in the spatial domain with its visualization"},
+            {$"filename {InverseSlowFourierTransform}", "Applies slow inverse Fourier Transform in the spatial domain with its visualization"},
+            {$"filename {FastFourierTransform}", "Applies Fast Fourier Transform in the spatial domain with its visualization"},
+            {$"filename {InverseFastFourierTransform}", "Applies inverse Fast Fourier Transform in the spatial domain with its visualization"},
+            {$"filename {LowPassFilter} intValue", "Applies low-pass filter for the chosen threshold"},
+            {$"filename {HighPassFilter} intValue", "Applies high-pass filter for the chosen threshold"},
+            {$"filename {BandPassFilter} intValue intValue", "Applies band-pass filter for the chosen min and max threshold"},
+            {$"filename {BandCutFilter} intValue intValue", "Applies band-cut filter for the chosen min and max threshold"},
+            {$"filename filename {HighPassWithEdgeDirection} intValue", "Applies high-pass filter for the chosen mask (the 2nd filename) and threshold"},
+            {$"filename {PhaseModifyingFilter} intValue intValue", "Applies phase modifying filter for values k and l"}
         };
     }
 }
