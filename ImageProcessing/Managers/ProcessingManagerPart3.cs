@@ -216,7 +216,16 @@ namespace Image_processing.Managers
             int minPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
             int minPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
 
+            for (int a = 0; a < newBitmap.Width; a++)
+            {
+                for (int b = 0; b < newBitmap.Height; b++)
+                {
+                    newBitmap.SetPixel(a, b, Color.FromArgb(0, 0, 0));
+                }
+            }
+
             pointStack.Push(new Point(x, y));
+            newBitmap.SetPixel(x, y, Color.FromArgb(255, 255, 255));
 
             while (true)
             {
@@ -233,12 +242,14 @@ namespace Image_processing.Managers
                 {
                     checkedPoints[point.X, point.Y] = true;
 
-                    if (bitmap.GetPixel(point.X, point.Y).R >= minPixelValueR &&
-                        bitmap.GetPixel(point.X, point.Y).G >= minPixelValueG &&
-                        bitmap.GetPixel(point.X, point.Y).B >= minPixelValueB &&
-                        bitmap.GetPixel(point.X, point.Y).R < maxPixelValueR &&
-                        bitmap.GetPixel(point.X, point.Y).G < maxPixelValueG &&
-                        bitmap.GetPixel(point.X, point.Y).B < maxPixelValueB)
+                    Color pixel = bitmap.GetPixel(point.X, point.Y);
+
+                    if (pixel.R >= minPixelValueR &&
+                        pixel.G >= minPixelValueG &&
+                        pixel.B >= minPixelValueB &&
+                        pixel.R < maxPixelValueR &&
+                        pixel.G < maxPixelValueG &&
+                        pixel.B < maxPixelValueB)
                     {
                         newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(255, 255, 255));
 
@@ -247,10 +258,6 @@ namespace Image_processing.Managers
                         pointStack.Push(new Point(point.X - 1, point.Y));
                         pointStack.Push(new Point(point.X + 1, point.Y));
                     }
-                }
-                else
-                {
-                    bitmap.SetPixel(point.X, point.Y, Color.FromArgb(0, 0, 0));
                 }
             }
 
