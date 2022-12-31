@@ -545,7 +545,6 @@ namespace Image_processing.Managers
             List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
             int width = frequencyDomain.Count;
             int height = frequencyDomain[0].Count;
-            Complex dc = frequencyDomain[width / 2][height / 2];
 
             frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
@@ -558,7 +557,7 @@ namespace Image_processing.Managers
                         Math.Pow(y - height / 2.0, 2)
                     );
 
-                    if ((value > minThreshold) || (value < maxThreshold))
+                    if ((value >= minThreshold) && (value <= maxThreshold))
                     {
                         if (preservePhase)
                         {
@@ -573,8 +572,6 @@ namespace Image_processing.Managers
                 }
             }
 
-            frequencyDomain[width / 2][height / 2] = dc;
-
             if (preservePhase)
             {
                 return ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
@@ -588,7 +585,6 @@ namespace Image_processing.Managers
             List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
             int width = frequencyDomain.Count;
             int height = frequencyDomain[0].Count;
-            Complex dc = frequencyDomain[width / 2][height / 2];
 
             for (int x = 0; x < width; x++)
             {
@@ -623,8 +619,6 @@ namespace Image_processing.Managers
                     }
                 }
             }
-
-            frequencyDomain[width / 2][height / 2] = dc;
 
             if (preservePhase)
             {
