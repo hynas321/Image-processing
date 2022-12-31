@@ -1,7 +1,5 @@
 ﻿using System.Drawing;
-using System.Globalization;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace Image_processing.Managers
 {
@@ -25,13 +23,14 @@ namespace Image_processing.Managers
             return visualizationImage;
         }
 
-        public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplySlowFourierTransform(Bitmap bitmap)
+        public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplyDft(Bitmap bitmap)
         {
-            Complex[,] complexNumbers1 = new Complex[bitmap.Height, bitmap.Width];
-            Complex[,] complexNumbers2 = new Complex[bitmap.Height, bitmap.Width];
-            List<List<Complex>> slowFourierTransformOutput = new List<List<Complex>>();
+            Complex[,] spatialDomain1 = new Complex[bitmap.Height, bitmap.Width];
+            Complex[,] spatialDomain2 = new Complex[bitmap.Height, bitmap.Width];
+            List<List<Complex>> frequencyDomainOutput = new List<List<Complex>>();
 
             //columns
+            //Dft 1D
             for (int a = 0; a < bitmap.Height; a++)
             {
                 for (int k = 0; k < bitmap.Width; k++)
@@ -41,17 +40,18 @@ namespace Image_processing.Managers
                     for (int n = 0; n < bitmap.Width; n++)
                     {
                         Complex W = new Complex(
-                            Math.Cos(2 * Math.PI * n * k / bitmap.Width), 
+                            Math.Cos(2 * Math.PI * n * k / bitmap.Width),
                             (-1) * Math.Sin(2 * Math.PI * n * k / bitmap.Width));
 
                         sum += bitmap.GetPixel(n, a).R * W;
                     }
 
-                    complexNumbers1[a, k] = sum;
+                    spatialDomain1[a, k] = sum;
                 }
             }
 
             //rows
+            //Dft 1D
             for (int b = 0; b < bitmap.Width; b++)
             {
                 for (int k = 0; k < bitmap.Height; k++)
@@ -65,38 +65,38 @@ namespace Image_processing.Managers
                             (-1) * Math.Sin(2 * Math.PI * n * k / bitmap.Height)
                         );
 
-                        sum += complexNumbers1[n, b] * W;
+                        sum += spatialDomain1[n, b] * W;
                     }
 
-                    complexNumbers2[k, b] = sum;
+                    spatialDomain2[k, b] = sum;
                 }
             }
 
-            for (int row = 0; row < complexNumbers2.GetLength(0); row++)
+            for (int row = 0; row < spatialDomain2.GetLength(0); row++)
             {
                 List<Complex> rowList = new List<Complex>();
 
-                for (int column = 0; column < complexNumbers2.GetLength(1); column++)
+                for (int column = 0; column < spatialDomain2.GetLength(1); column++)
                 {
-                    rowList.Add(complexNumbers2[row, column]);
+                    rowList.Add(spatialDomain2[row, column]);
                 }
 
-                slowFourierTransformOutput.Add(rowList);
+                frequencyDomainOutput.Add(rowList);
             }
 
-            List<List<Complex>> swappedQuarters = ApplyQuartersSwap(slowFourierTransformOutput);
+            List<List<Complex>> swappedQuarters = ApplyQuartersSwap(frequencyDomainOutput);
             Bitmap newBitmap = ApplyFourierSpectrumVisualization(swappedQuarters);
 
-            (List<List<Complex>> complexNumbers, Bitmap bitmap) returnedValues = (slowFourierTransformOutput, newBitmap);
+            (List<List<Complex>> complexNumbers, Bitmap bitmap) returnedValues = (frequencyDomainOutput, newBitmap);
 
             return returnedValues;
         }
 
-        public Bitmap ApplyInverseSlowFourierTransform(Bitmap bitmap)
+        public Bitmap ApplyInverseDft(Bitmap bitmap)
         {
-            List<List<Complex>> fourierTransformComplexNumbers = ApplySlowFourierTransform(bitmap).complexNumbers;
-            Bitmap newBitmap = new Bitmap(fourierTransformComplexNumbers[0].Count, fourierTransformComplexNumbers.Count);
-            Complex[,] complexNumbers = new Complex[newBitmap.Height, newBitmap.Width];
+            List<List<Complex>> frequencyDomain = ApplyDft(bitmap).complexNumbers;
+            Bitmap newBitmap = new Bitmap(frequencyDomain[0].Count, frequencyDomain.Count);
+            Complex[,] spatialDomain = new Complex[newBitmap.Height, newBitmap.Width];
 
             //columns
             for (int a = 0; a < newBitmap.Width; a++)
@@ -112,10 +112,10 @@ namespace Image_processing.Managers
                             (-1) * Math.Sin(2 * Math.PI * n * k / newBitmap.Height)
                         );
 
-                        sum += fourierTransformComplexNumbers[n][a] * W;
+                        sum += frequencyDomain[n][a] * W;
                     }
 
-                    complexNumbers[k, a] = sum / newBitmap.Height;
+                    spatialDomain[k, a] = sum / newBitmap.Height;
                 }
             }
 
@@ -133,7 +133,7 @@ namespace Image_processing.Managers
                             -Math.Sin(2 * Math.PI * n * k / newBitmap.Width)
                         );
 
-                        sum += complexNumbers[b, n] * W;
+                        sum += spatialDomain[b, n] * W;
                     }
 
                     int calculatedColor = (int)Math.Clamp(sum.Magnitude / newBitmap.Width, 0, 255);
@@ -149,10 +149,10 @@ namespace Image_processing.Managers
             return ApplyDiagonalFlip(newBitmap);
         }
 
-        public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplyFastFourierTransform(Bitmap bitmap)
+        public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplyFft(Bitmap bitmap)
         {
-            List<List<Complex>> fastFourierTransformOutput = new List<List<Complex>>();
-            List<List<Complex>> complexNumbers = new List<List<Complex>>();
+            List<List<Complex>> frequencyDomain = new List<List<Complex>>();
+            List<List<Complex>> spatialDomain = new List<List<Complex>>();
 
             //rows
             for (int a = 0; a < bitmap.Height; a++)
@@ -164,7 +164,7 @@ namespace Image_processing.Managers
                     rows.Add(bitmap.GetPixel(x, a).R);
                 }
 
-                complexNumbers.Add(ApplyFastFourierTransform1D(rows));
+                spatialDomain.Add(ApplyFft1D(rows));
             }
 
             //columns
@@ -174,26 +174,26 @@ namespace Image_processing.Managers
 
                 for (int y = 0; y < bitmap.Height; y++)
                 {
-                    columns.Add(complexNumbers[y][b]);
+                    columns.Add(spatialDomain[y][b]);
                 }
 
-                fastFourierTransformOutput.Add(ApplyFastFourierTransform1D(columns));
+                frequencyDomain.Add(ApplyFft1D(columns));
             }
 
-            List<List<Complex>> swappedQuarters = ApplyQuartersSwap(fastFourierTransformOutput);
+            List<List<Complex>> swappedQuarters = ApplyQuartersSwap(frequencyDomain);
             Bitmap newBitmap = ApplyFourierSpectrumVisualization(swappedQuarters);
 
             newBitmap = ApplyVerticalFlip(newBitmap);
             newBitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
-            (List<List<Complex>> complexNumbers, Bitmap bitmap) returnedValues = (fastFourierTransformOutput, newBitmap);
+            (List<List<Complex>> complexNumbers, Bitmap bitmap) returnedValues = (frequencyDomain, newBitmap);
 
             return returnedValues;
         }
 
-        public Bitmap ApplyInverseFastFourierTransform(Bitmap bitmap)
+        public Bitmap ApplyInverseFft(Bitmap bitmap)
         {
-            List<List<Complex>> fourierTransformComplexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
+            List<List<Complex>> fourierTransformComplexNumbers = ApplyFft(bitmap).complexNumbers;
             Bitmap newBitmap = new Bitmap(fourierTransformComplexNumbers[0].Count, fourierTransformComplexNumbers.Count);
             List<List<Complex>> values = new List<List<Complex>>();
 
@@ -211,7 +211,7 @@ namespace Image_processing.Managers
                     rows.Add(fourierTransformComplexNumbers[y][x]);
                 }
 
-                rows = ApplyInverseFastFourierTransform1D(rows);
+                rows = ApplyInverseFftID(rows);
 
                 for (int x = 0; x < newBitmap.Width; x++)
                 {
@@ -228,7 +228,7 @@ namespace Image_processing.Managers
                     columns.Add(values[y][x]);
                 }
 
-                columns = ApplyInverseFastFourierTransform1D(columns);
+                columns = ApplyInverseFftID(columns);
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
@@ -245,7 +245,7 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
-        public Bitmap ApplyInverseFastFourierTransform(List<List<Complex>> fourierTransformComplexNumbers)
+        public Bitmap ApplyInverseFft(List<List<Complex>> fourierTransformComplexNumbers)
         {
             Bitmap newBitmap = new Bitmap(fourierTransformComplexNumbers[0].Count, fourierTransformComplexNumbers.Count);
             List<List<Complex>> values = new List<List<Complex>>();
@@ -264,7 +264,7 @@ namespace Image_processing.Managers
                     rows.Add(fourierTransformComplexNumbers[y][x]);
                 }
 
-                rows = ApplyInverseFastFourierTransform1D(rows);
+                rows = ApplyInverseFftID(rows);
 
                 for (int x = 0; x < newBitmap.Width; x++)
                 {
@@ -281,7 +281,7 @@ namespace Image_processing.Managers
                     columns.Add(values[y][x]);
                 }
 
-                columns = ApplyInverseFastFourierTransform1D(columns);
+                columns = ApplyInverseFftID(columns);
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
@@ -298,7 +298,7 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
-        private List<Complex> ApplyInverseFastFourierTransform1D(List<Complex> list)
+        private List<Complex> ApplyInverseFftID(List<Complex> list)
         {
             List<Complex> outputResult = new List<Complex>(list.Count);
             List<Complex> oddComplexNumbers = new List<Complex>(list.Count / 2);
@@ -315,8 +315,8 @@ namespace Image_processing.Managers
                 evenComplexNumbers.Add(list[2 * i]);
             }
 
-            oddComplexNumbers = ApplyInverseFastFourierTransform1D(oddComplexNumbers);
-            evenComplexNumbers = ApplyInverseFastFourierTransform1D(evenComplexNumbers);
+            oddComplexNumbers = ApplyInverseFftID(oddComplexNumbers);
+            evenComplexNumbers = ApplyInverseFftID(evenComplexNumbers);
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -337,7 +337,7 @@ namespace Image_processing.Managers
             return outputResult;
         }
 
-        private List<Complex> ApplyFastFourierTransform1D(List<Complex> list)
+        private List<Complex> ApplyFft1D(List<Complex> list)
         {
             List<Complex> outputResult = new List<Complex>(list.Count);
             List<Complex> oddComplexNumbers = new List<Complex>(list.Count / 2);
@@ -354,12 +354,13 @@ namespace Image_processing.Managers
                 evenComplexNumbers.Add(list[2 * i]);
             }
 
-            oddComplexNumbers = ApplyFastFourierTransform1D(oddComplexNumbers);
-            evenComplexNumbers = ApplyFastFourierTransform1D(evenComplexNumbers);
+            oddComplexNumbers = ApplyFft1D(oddComplexNumbers);
+            evenComplexNumbers = ApplyFft1D(evenComplexNumbers);
 
+            //Added to fill the List<Complex> outputResult before assignment operations on elements
             for (int i = 0; i < list.Count; i++)
             {
-                outputResult.Add(0);
+                outputResult.Add(-1);
             }
 
             for (int i = 0; i < list.Count / 2; i++)
@@ -409,70 +410,101 @@ namespace Image_processing.Managers
             return complexNumbersResult;
         }
 
-        public Bitmap ApplyLowPassFilter(Bitmap bitmap, int threshold)
+        public Bitmap ApplyLowPassFilter(Bitmap bitmap, int cutOff, bool preservePhase)
         {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-                        int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
 
-            complexNumbers = ApplyQuartersSwap(complexNumbers);
+            frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    double value = (Math.Sqrt(Math.Pow((x - width / 2), 2) + Math.Pow((y - height / 2), 2)));
-
-                    if (value > threshold)
-                    {
-                        complexNumbers[x][y] = new Complex(0, 0);
-                    }
-                }
-            }
-
-            complexNumbers = ApplyQuartersSwap(complexNumbers);
-
-            return ApplyInverseFastFourierTransform(complexNumbers);
-        }
-
-        public Bitmap ApplyHighPassFilter(Bitmap bitmap, int threshold)
-        {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-            int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
-
-            complexNumbers = ApplyQuartersSwap(complexNumbers);
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    double value = Math.Sqrt(
-                        Math.Pow(x - width / 2.0, 2) +
-                        Math.Pow(y - height / 2.0, 2)
+                    double distance = Math.Sqrt(
+                        Math.Pow((x - width / 2), 2) +
+                        Math.Pow((y - height / 2), 2)
                     );
 
-                    if (value < threshold)
+                    if (distance > cutOff)
                     {
-                        complexNumbers[x][y] = new Complex(0, 0);
+                        if (preservePhase)
+                        {
+                            double phase = frequencyDomain[x][y].Phase;
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
                     }
                 }
             }
 
-            complexNumbers = ApplyQuartersSwap(complexNumbers);
+            if (preservePhase)
+            {
+                return ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
+            }
 
-            return ApplyInverseFastFourierTransform(complexNumbers);
+            return ApplyInverseFft(frequencyDomain);
         }
 
-        public Bitmap ApplyBandPassFilter(Bitmap bitmap, int maxThreshold, int minThreshold)
+        public Bitmap ApplyHighPassFilter(Bitmap bitmap, int cutOff, bool preservePhase)
         {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-            int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
+            Complex dc = frequencyDomain[width / 2][height / 2];
 
-            Complex dc = complexNumbers[width / 2][height / 2];
+            frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
-            complexNumbers = ApplyQuartersSwap(complexNumbers);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    double distance = Math.Sqrt(
+                        Math.Pow((x - width / 2), 2) +
+                        Math.Pow((y - height / 2), 2)
+                    );
+
+                    if (distance < cutOff)
+                    {
+                        if (preservePhase)
+                        {
+                            // Preserve the phase information of the sample
+                            double phase = frequencyDomain[x][y].Phase;
+                            // Set the magnitude to zero to attenuate the low-frequency component
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
+                    }
+                }
+            }
+
+            frequencyDomain[width / 2][height / 2] = dc;
+
+
+            if (preservePhase)
+            {
+                // Transform the frequency domain representation back to the spatial domain
+                return ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
+            }
+
+            return ApplyInverseFft(frequencyDomain);
+        }
+
+        public Bitmap ApplyBandPassFilter(Bitmap bitmap, int maxThreshold, int minThreshold, bool preservePhase)
+        {
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
+            Complex dc = frequencyDomain[width / 2][height / 2];
+
+            frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
             for (int x = 0; x < width; x++)
             {
@@ -485,21 +517,37 @@ namespace Image_processing.Managers
 
                     if ((value > minThreshold) || (value < maxThreshold))
                     {
-                        complexNumbers[x][y] = new Complex(0d, 0d);
+                        if (preservePhase)
+                        {
+                            double phase = frequencyDomain[x][y].Phase;
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
                     }
                 }
             }
 
-            complexNumbers[width / 2][height / 2] = dc;
+            frequencyDomain[width / 2][height / 2] = dc;
 
-            return ApplyInverseFastFourierTransform(complexNumbers);
+            if (preservePhase)
+            {
+                return ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
+            }
+
+            return ApplyInverseFft(frequencyDomain);
         }
 
-        public Bitmap ApplyBandCutFilter(Bitmap bitmap, int minThreshold, int maxThreshold)
+        public Bitmap ApplyBandCutFilter(Bitmap bitmap, int minThreshold, int maxThreshold, bool preservePhase)
         {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-            int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
+            Complex dc = frequencyDomain[width / 2][height / 2];
+
+            frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
             for (int x = 0; x < width; x++)
             {
@@ -510,22 +558,37 @@ namespace Image_processing.Managers
                         Math.Pow(y - height / 2.0, 2)
                     );
 
-                    if ((value < minThreshold) || (value > maxThreshold))
+                    if ((value > minThreshold) || (value < maxThreshold))
                     {
-                        complexNumbers[x][y] = new Complex(0d, 0d);
+                        if (preservePhase)
+                        {
+                            double phase = frequencyDomain[x][y].Phase;
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
                     }
                 }
             }
 
-            return ApplyInverseFastFourierTransform(complexNumbers);
+            frequencyDomain[width / 2][height / 2] = dc;
+
+            if (preservePhase)
+            {
+                return ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
+            }
+
+            return ApplyInverseFft(frequencyDomain);
         }
 
-        public Bitmap ApplyHighPassEdgeDetectionFilter(Bitmap bitmap, Bitmap mask, int threshold)
+        public Bitmap ApplyHighPassEdgeDetectionFilter(Bitmap bitmap, Bitmap mask, int threshold, bool preservePhase)
         {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-            int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
-            Complex dc = complexNumbers[width / 2][height / 2];
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
+            Complex dc = frequencyDomain[width / 2][height / 2];
 
             for (int x = 0; x < width; x++)
             {
@@ -533,38 +596,67 @@ namespace Image_processing.Managers
                 {
                     if (mask.GetPixel(x, y).R == 0)
                     {
-                        complexNumbers[x][y] = new Complex(0d, 0d);
+                        if (preservePhase)
+                        {
+                            double phase = frequencyDomain[x][y].Phase;
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
                     }
                     else if (Math.Sqrt(
                         Math.Pow(x - width / 2.0, 2) +
                         Math.Pow(y - height / 2.0, 2)
                     ) < threshold)
                     {
-                        complexNumbers[x][y] = new Complex(0d, 0d);
+                        if (preservePhase)
+                        {
+                            double phase = frequencyDomain[x][y].Phase;
+                            frequencyDomain[x][y] = new Complex(0, phase);
+                        }
+                        else
+                        {
+                            frequencyDomain[x][y] = new Complex(0, 0);
+                        }
                     }
                 }
             }
 
-            complexNumbers[width / 2][height / 2] = dc;
+            frequencyDomain[width / 2][height / 2] = dc;
 
-            return ApplyInverseFastFourierTransform(complexNumbers);
+            if (preservePhase)
+            {
+                Bitmap result = ApplyInverseFft(ApplyFourierSpectrumVisualization(frequencyDomain));
+                result.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+                return result;
+            }
+
+            return ApplyInverseFft(frequencyDomain);
         }
 
-        public Bitmap ApplyPhaseModifying(Bitmap bitmap, int k, int l)
+        public Bitmap ApplyPhaseModifying(Bitmap bitmap, int k, int l, bool preservePhase)
         {
-            List<List<Complex>> complexNumbers = ApplyFastFourierTransform(bitmap).complexNumbers;
-            int width = complexNumbers.Count;
-            int height = complexNumbers[0].Count;
+            List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
+            int width = frequencyDomain.Count;
+            int height = frequencyDomain[0].Count;
+            Complex dc = frequencyDomain[width / 2][height / 2];
+
+            frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    complexNumbers[x][y] = ApplyPhaseMask(complexNumbers[x][y], x, y, k, l);
+                    frequencyDomain[x][y] = ApplyPhaseMask(frequencyDomain[x][y], x, y, k, l);
                 }
             }
 
-            return ApplyInverseFastFourierTransform(complexNumbers);
+            frequencyDomain[width / 2][height / 2] = dc;
+
+            return ApplyInverseFft(frequencyDomain);
         }
 
         private Complex ApplyPhaseMask(Complex number, int x, int y, int k, int l)

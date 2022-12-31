@@ -70,7 +70,7 @@ namespace Image_processing.Managers
                 bitmap.Save($@"{modifiedImagesFolderPath}\{file}", ImageFormat.Bmp);
 
                 FileInfo fInfo = new FileInfo($@"{modifiedImagesFolderPath}\{file}");
-                fInfo.MoveTo($@"{modifiedImagesFolderPath}\{savedFile}");
+                fInfo.MoveTo($@"{modifiedImagesFolderPath}\{savedFile}", false);
             }
             catch
             {
