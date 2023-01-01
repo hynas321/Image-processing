@@ -5,23 +5,8 @@ namespace Image_processing.Managers
 {
     public partial class ProcessingManager
     {
-        public Bitmap ApplyFourierSpectrumVisualization(List<List<Complex>> image)
-        {
-            Bitmap visualizationImage = new Bitmap(image[0].Count, image.Count);
 
-            for (int x = 0; x < image[0].Count; x++)
-            {
-                for (int y = 0; y < image.Count; y++)
-                {
-                    int calculatedColor = (int)Math.Clamp(Math.Log(Math.Abs(image[y][x].Magnitude)) * 10, 0, 255);
-                    Color pixel = Color.FromArgb(1, calculatedColor, calculatedColor, calculatedColor);
-
-                    visualizationImage.SetPixel(x, y, pixel);
-                }
-            }
-
-            return visualizationImage;
-        }
+        #region DFT
 
         public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplyDft(Bitmap bitmap)
         {
@@ -149,6 +134,10 @@ namespace Image_processing.Managers
             return ApplyDiagonalFlip(newBitmap);
         }
 
+        #endregion
+
+        #region FFT
+
         public (List<List<Complex>> complexNumbers, Bitmap bitmap) ApplyFft(Bitmap bitmap)
         {
             List<List<Complex>> frequencyDomain = new List<List<Complex>>();
@@ -191,6 +180,50 @@ namespace Image_processing.Managers
             return returnedValues;
         }
 
+        private List<Complex> ApplyFft1D(List<Complex> list)
+        {
+            List<Complex> outputResult = new List<Complex>(list.Count);
+            List<Complex> oddComplexNumbers = new List<Complex>(list.Count / 2);
+            List<Complex> evenComplexNumbers = new List<Complex>(list.Count / 2);
+
+            //if input data consits of only one sample
+            if (list.Count == 1)
+            {
+                return list;
+            }
+
+            //input data divided into two sets: even and odd
+            for (int i = 0; i < list.Count / 2; i++)
+            {
+                oddComplexNumbers.Add(list[2 * i + 1]);
+                evenComplexNumbers.Add(list[2 * i]);
+            }
+
+            //recursion applied to both sets
+            oddComplexNumbers = ApplyFft1D(oddComplexNumbers);
+            evenComplexNumbers = ApplyFft1D(evenComplexNumbers);
+
+            //Added to fill the List<Complex> outputResult before assignment operations on elements
+            for (int i = 0; i < list.Count; i++)
+            {
+                outputResult.Add(-1);
+            }
+
+            //butterfly operations
+            for (int i = 0; i < list.Count / 2; i++)
+            {
+                Complex number = new Complex(
+                    Math.Cos(2 * Math.PI * i / list.Count),
+                    (-1) * Math.Sin(2 * Math.PI * i / list.Count)
+                );
+
+                outputResult[i] = evenComplexNumbers[i] + number * oddComplexNumbers[i];
+                outputResult[i + list.Count / 2] = evenComplexNumbers[i] - number * oddComplexNumbers[i];
+            }
+
+            return outputResult;
+        }
+
         public Bitmap ApplyInverseFft(Bitmap bitmap)
         {
             List<List<Complex>> fourierTransformComplexNumbers = ApplyFft(bitmap).complexNumbers;
@@ -211,7 +244,7 @@ namespace Image_processing.Managers
                     rows.Add(fourierTransformComplexNumbers[y][x]);
                 }
 
-                rows = ApplyInverseFftID(rows);
+                rows = ApplyInverseFft1D(rows);
 
                 for (int x = 0; x < newBitmap.Width; x++)
                 {
@@ -228,7 +261,7 @@ namespace Image_processing.Managers
                     columns.Add(values[y][x]);
                 }
 
-                columns = ApplyInverseFftID(columns);
+                columns = ApplyInverseFft1D(columns);
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
@@ -264,7 +297,7 @@ namespace Image_processing.Managers
                     rows.Add(fourierTransformComplexNumbers[y][x]);
                 }
 
-                rows = ApplyInverseFftID(rows);
+                rows = ApplyInverseFft1D(rows);
 
                 for (int x = 0; x < newBitmap.Width; x++)
                 {
@@ -281,7 +314,7 @@ namespace Image_processing.Managers
                     columns.Add(values[y][x]);
                 }
 
-                columns = ApplyInverseFftID(columns);
+                columns = ApplyInverseFft1D(columns);
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
@@ -298,84 +331,48 @@ namespace Image_processing.Managers
             return newBitmap;
         }
 
-        private List<Complex> ApplyInverseFftID(List<Complex> list)
+        private List<Complex> ApplyInverseFft1D(List<Complex> fourierTransformComplexNumbers)
         {
-            List<Complex> outputResult = new List<Complex>(list.Count);
-            List<Complex> oddComplexNumbers = new List<Complex>(list.Count / 2);
-            List<Complex> evenComplexNumbers = new List<Complex>(list.Count / 2);
+            List<Complex> outputResult = new List<Complex>(fourierTransformComplexNumbers.Count);
+            List<Complex> oddComplexNumbers = new List<Complex>(fourierTransformComplexNumbers.Count / 2);
+            List<Complex> evenComplexNumbers = new List<Complex>(fourierTransformComplexNumbers.Count / 2);
 
-            if (list.Count == 1)
+            if (fourierTransformComplexNumbers.Count == 1)
             {
-                return list;
+                return fourierTransformComplexNumbers;
             }
 
-            for (int i = 0; i < list.Count / 2; i++)
+            for (int i = 0; i < fourierTransformComplexNumbers.Count / 2; i++)
             {
-                oddComplexNumbers.Add(list[2 * i + 1]);
-                evenComplexNumbers.Add(list[2 * i]);
+                oddComplexNumbers.Add(fourierTransformComplexNumbers[2 * i + 1]);
+                evenComplexNumbers.Add(fourierTransformComplexNumbers[2 * i]);
             }
 
-            oddComplexNumbers = ApplyInverseFftID(oddComplexNumbers);
-            evenComplexNumbers = ApplyInverseFftID(evenComplexNumbers);
+            oddComplexNumbers = ApplyInverseFft1D(oddComplexNumbers);
+            evenComplexNumbers = ApplyInverseFft1D(evenComplexNumbers);
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                outputResult.Add(0);
-            }
-
-            for (int i = 0; i < list.Count / 2; i++)
-            {
-                Complex number = new Complex(
-                    Math.Cos(2 * Math.PI * i / list.Count),
-                    Math.Sin(2 * Math.PI * i / list.Count)
-                );
-
-                outputResult[i] = evenComplexNumbers[i] + number * oddComplexNumbers[i];
-                outputResult[i + list.Count / 2] = evenComplexNumbers[i] - number * oddComplexNumbers[i];
-            }
-
-            return outputResult;
-        }
-
-        private List<Complex> ApplyFft1D(List<Complex> list)
-        {
-            List<Complex> outputResult = new List<Complex>(list.Count);
-            List<Complex> oddComplexNumbers = new List<Complex>(list.Count / 2);
-            List<Complex> evenComplexNumbers = new List<Complex>(list.Count / 2);
-
-            if (list.Count == 1)
-            {
-                return list;
-            }
-
-            for (int i = 0; i < list.Count / 2; i++)
-            {
-                oddComplexNumbers.Add(list[2 * i + 1]);
-                evenComplexNumbers.Add(list[2 * i]);
-            }
-
-            oddComplexNumbers = ApplyFft1D(oddComplexNumbers);
-            evenComplexNumbers = ApplyFft1D(evenComplexNumbers);
-
-            //Added to fill the List<Complex> outputResult before assignment operations on elements
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < fourierTransformComplexNumbers.Count; i++)
             {
                 outputResult.Add(-1);
             }
 
-            for (int i = 0; i < list.Count / 2; i++)
+            for (int i = 0; i < fourierTransformComplexNumbers.Count / 2; i++)
             {
                 Complex number = new Complex(
-                    Math.Cos(2 * Math.PI * i / list.Count),
-                    (-1) * Math.Sin(2 * Math.PI * i / list.Count)
+                    Math.Cos(2 * Math.PI * i / fourierTransformComplexNumbers.Count),
+                    Math.Sin(2 * Math.PI * i / fourierTransformComplexNumbers.Count)
                 );
 
                 outputResult[i] = evenComplexNumbers[i] + number * oddComplexNumbers[i];
-                outputResult[i + list.Count / 2] = evenComplexNumbers[i] - number * oddComplexNumbers[i];
+                outputResult[i + fourierTransformComplexNumbers.Count / 2] = evenComplexNumbers[i] - number * oddComplexNumbers[i];
             }
 
             return outputResult;
         }
+
+        #endregion
+
+        #region Fourier Transform Helper Methods
 
         private List<List<Complex>> ApplyQuartersSwap(List<List<Complex>> list)
         {
@@ -409,6 +406,28 @@ namespace Image_processing.Managers
 
             return complexNumbersResult;
         }
+
+        public Bitmap ApplyFourierSpectrumVisualization(List<List<Complex>> image)
+        {
+            Bitmap visualizationImage = new Bitmap(image[0].Count, image.Count);
+
+            for (int x = 0; x < image[0].Count; x++)
+            {
+                for (int y = 0; y < image.Count; y++)
+                {
+                    int calculatedColor = (int)Math.Clamp(Math.Log(Math.Abs(image[y][x].Magnitude)) * 10, 0, 255);
+                    Color pixel = Color.FromArgb(1, calculatedColor, calculatedColor, calculatedColor);
+
+                    visualizationImage.SetPixel(x, y, pixel);
+                }
+            }
+
+            return visualizationImage;
+        }
+
+        #endregion
+
+        #region Filters
 
         public Bitmap ApplyLowPassFilter(Bitmap bitmap, int cutOff, bool preservePhase)
         {
@@ -660,5 +679,7 @@ namespace Image_processing.Managers
 
             return number * result;
         }
+
+        #endregion
     }
 }
