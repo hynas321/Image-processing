@@ -631,12 +631,11 @@ namespace Image_processing.Managers
             return ApplyInverseFft(frequencyDomain);
         }
 
-        public Bitmap ApplyPhaseModifying(Bitmap bitmap, int k, int l, bool preservePhase)
+        public Bitmap ApplyPhaseModifying(Bitmap bitmap, int k, int l)
         {
             List<List<Complex>> frequencyDomain = ApplyFft(bitmap).complexNumbers;
             int width = frequencyDomain.Count;
             int height = frequencyDomain[0].Count;
-            Complex dc = frequencyDomain[width / 2][height / 2];
 
             frequencyDomain = ApplyQuartersSwap(frequencyDomain);
 
@@ -644,24 +643,22 @@ namespace Image_processing.Managers
             {
                 for (int y = 0; y < height; y++)
                 {
-                    frequencyDomain[x][y] = ApplyPhaseMask(frequencyDomain[x][y], x, y, k, l);
+                    double phase = frequencyDomain[x][y].Phase;
+                    frequencyDomain[x][y] = ApplyPhaseMask(bitmap, frequencyDomain[x][y], x, y, k, l);
                 }
             }
-
-            frequencyDomain[width / 2][height / 2] = dc;
 
             return ApplyInverseFft(frequencyDomain);
         }
 
-        private Complex ApplyPhaseMask(Complex number, int x, int y, int k, int l)
+        private Complex ApplyPhaseMask(Bitmap bitmap, Complex number, int x, int y, int k, int l)
         {
-            int j = 1;
-            double formula = Math.Pow(
-                Math.E,
-                j * (((-1) * (x * k * 2 * Math.PI) / x) + (-1) * (y * l * 2 * Math.PI / y) + (k + l) * Math.PI)
+            Complex j = new Complex(0, 1);
+            Complex result = Complex.Exp(
+                j * (((-1) * (x * k * 2 * Math.PI) / bitmap.Width) + (-1) * (y * l * 2 * Math.PI / bitmap.Height) + (k + l) * Math.PI)
             );
 
-            return new Complex(number.Real * formula, number.Imaginary * formula);
+            return number * result;
         }
     }
 }

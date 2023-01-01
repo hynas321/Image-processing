@@ -320,6 +320,9 @@ namespace Image_processing
                         case Operations.RaleighFinalProbabilityDensityFunction:
                             bitmap = processingManager.ApplyRaleigh(bitmap, value1, value2);
                             break;
+                        case Operations.PhaseModifyingFilter:
+                            bitmap = processingManager.ApplyPhaseModifying(bitmap, value1, value2);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -379,9 +382,6 @@ namespace Image_processing
                             break;
                         case Operations.BandCutFilter:
                             bitmap = processingManager.ApplyBandCutFilter(bitmap, value1, value2, preservePhase);
-                            break;
-                        case Operations.PhaseModifyingFilter:
-                            bitmap = processingManager.ApplyPhaseModifying(bitmap, value1, value2, preservePhase);
                             break;
                         default:
                             throw new CommandException(

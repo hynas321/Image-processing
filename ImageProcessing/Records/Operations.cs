@@ -150,7 +150,7 @@
             {$"filename {BandPassFilter} intValue intValue charValue [y/n]", "Applies band-pass filter for the min and max threshold with(out) preserved phase"},
             {$"filename {BandCutFilter} intValue intValue charValue [y/n]", "Applies band-cut filter for the  min and max threshold with(out) preserved phase"},
             {$"filename filename {HighPassWithEdgeDirection} intValue charValue  [y/n]", "Applies high-pass filter for the mask (the 2nd filename) and threshold with(out) preserved phase"},
-            {$"filename {PhaseModifyingFilter} intValue intValue charValue [y/n]", "Applies phase modifying filter for values k and l with(out) preserved phase"}
+            {$"filename {PhaseModifyingFilter} intValue intValue", "Applies phase modifying filter for values k and l"}
         };
     }
 }
