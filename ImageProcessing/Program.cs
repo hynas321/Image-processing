@@ -32,6 +32,13 @@ namespace Image_processing
                     plotImagesFolderPath
                 );
 
+                int value;
+                int value1;
+                int value2;
+                int threshold;
+                char color;
+                char key;
+
                 stopWatch.Start();
 
                 if (args.Length == 0)
@@ -78,6 +85,18 @@ namespace Image_processing
                         case Operations.SobelOperator:
                             bitmap = processingManager.ApplySobelOperator(bitmap);
                             break;
+                        case Operations.DiscreteFourierTransform:
+                            bitmap = processingManager.ApplyDft(bitmap).bitmap;
+                            break;
+                        case Operations.InverseDiscreteFourierTransform:
+                            bitmap = processingManager.ApplyInverseDft(bitmap);
+                            break;
+                            case Operations.FastFourierTransform: 
+                            bitmap = processingManager.ApplyFft(bitmap).bitmap; 
+                            break;
+                           case Operations.InverseFastFourierTransform:
+                           bitmap = processingManager.ApplyInverseFft(bitmap);
+                           break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -91,7 +110,7 @@ namespace Image_processing
                 }
                 //filename --operation intValue
                 else if (args.Length == 3 && args[1].StartsWith("--")
-                    && int.TryParse(args[2], out int value))
+                                          && int.TryParse(args[2], out value))
                 {
                     string filename = args[0];
                     string operation = args[1];
@@ -137,13 +156,16 @@ namespace Image_processing
                             bitmap = processingManager.ApplyHmt(bitmap, value);
                             break;
                         case Operations.M1Operation1:
-                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), bitmap, value);
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value),
+                                bitmap, value);
                             break;
                         case Operations.M1Operation2:
-                            bitmap = processingManager.ApplyM1Operation(bitmap, processingManager.ApplyErosion(bitmap, value), value);
+                            bitmap = processingManager.ApplyM1Operation(bitmap,
+                                processingManager.ApplyErosion(bitmap, value), value);
                             break;
                         case Operations.M1Operation3:
-                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value), processingManager.ApplyErosion(bitmap, value), value);
+                            bitmap = processingManager.ApplyM1Operation(processingManager.ApplyDilation(bitmap, value),
+                                processingManager.ApplyErosion(bitmap, value), value);
                             break;
                         default:
                             throw new CommandException(
@@ -198,8 +220,8 @@ namespace Image_processing
                     );
                 }
                 //filename --operation charValue
-                else if (args.Length == 3 && args[1].StartsWith("--") 
-                    && char.TryParse(args[2], out char color))
+                else if (args.Length == 3 && args[1].StartsWith("--")
+                                          && char.TryParse(args[2], out color))
                 {
                     string filename = args[0];
                     string operation = args[1];
@@ -260,10 +282,36 @@ namespace Image_processing
                         );
                     }
                 }
+                //filename --operation intValue charValue
+                else if (args.Length == 4 && args[1].StartsWith("--")
+                                          && int.TryParse(args[2], out threshold)
+                                          && char.TryParse(args[3], out key))
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+                   
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+
+
+                          switch (operation)
+                       {
+                           case Operations.LowPassFilter:
+                             bitmap = processingManager.ApplyLowPassFilter(bitmap, threshold, key);
+                           break;
+                    //       case Operations.HighPassFilter:
+                    //          bitmap = processingManager.ApplyHighPassFilter(bitmap, threshold, preservePhase);
+                    //            break;
+                       }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, threshold);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
                 //filename --operation intValue intValue
-                else if (args.Length == 4 && args[1].StartsWith("--") 
-                    && int.TryParse(args[2], out int minBrightness)
-                    && int.TryParse(args[3], out int maxBrightness))
+                else if (args.Length == 4 && args[1].StartsWith("--")
+                                          && int.TryParse(args[2], out value1)
+                                          && int.TryParse(args[3], out value2))
                 {
                     string filename = args[0];
                     string operation = args[1];
@@ -273,8 +321,11 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.RaleighFinalProbabilityDensityFunction:
-                            bitmap = processingManager.ApplyRaleigh(bitmap, minBrightness, maxBrightness);
+                            bitmap = processingManager.ApplyRaleigh(bitmap, value1, value2);
                             break;
+                        //   case Operations.PhaseModifyingFilter:
+                        //       bitmap = processingManager.ApplyPhaseModifying(bitmap, value1, value2);
+                        //      break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -282,15 +333,75 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation, minBrightness, maxBrightness);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, value1, value2);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
+                //filename filename --operation intValue charValue
+                else if (args.Length == 5 && args[2].StartsWith("--")
+                                          && int.TryParse(args[3], out threshold)
+                                          && char.TryParse(args[4], out key))
+                {
+                    string filename1 = args[0];
+                    string filename2 = args[1];
+                    string operation = args[2];
+
+                    Bitmap bitmap1 = fileManager.LoadBitmapFile(filename1);
+                    Bitmap bitmap2 = fileManager.LoadBitmapFile(filename2);
+                    //   bool preservePhase = ProcessingHelper.GetPhasePreservationInput(key);
+
+                    switch (operation)
+                    {
+                        //  case Operations.HighPassWithEdgeDirection:
+                        //     bitmap1 = processingManager.ApplyHighPassEdgeDetectionFilter(bitmap1, bitmap2, threshold, preservePhase);
+                        //     break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap1, operation, threshold);
+
+                    ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
+                }
+                //filename --operation intValue intValue charValue
+                else if (args.Length == 5 && args[1].StartsWith("--")
+                                          && int.TryParse(args[2], out value1)
+                                          && int.TryParse(args[3], out value2)
+                                          && char.TryParse(args[4], out key))
+                {
+                    string filename = args[0];
+                    string operation = args[1];
+
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
+                    //     bool preservePhase = ProcessingHelper.GetPhasePreservationInput(key);
+
+                    switch (operation)
+                    {
+                        //    case Operations.BandPassFilter:
+                        //         bitmap = processingManager.ApplyBandPassFilter(bitmap, value1, value2, preservePhase);
+                        //         break;
+                        //     case Operations.BandCutFilter:
+                        //        bitmap = processingManager.ApplyBandCutFilter(bitmap, value1, value2, preservePhase);
+                        //         break;
+                        default:
+                            throw new CommandException(
+                                $"Command {command} is incorrect\n" +
+                                $"Run program with \"--help\" parameter to see all available commands with description"
+                            );
+                    }
+
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, value1, value2);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
                 //filename --operation intValue intValue intValue
                 else if (args.Length == 5 && args[1].StartsWith("--")
-                    && int.TryParse(args[2], out int x)
-                    && int.TryParse(args[3], out int y)
-                    && int.TryParse(args[4], out int threshold))
+                                          && int.TryParse(args[2], out int x)
+                                          && int.TryParse(args[3], out int y)
+                                          && int.TryParse(args[4], out int mergingThreshold))
                 {
                     string filename = args[0];
                     string operation = args[1];
@@ -300,7 +411,7 @@ namespace Image_processing
                     switch (operation)
                     {
                         case Operations.Merging:
-                            bitmap = processingManager.ApplyMerging(bitmap, x, y, threshold);
+                            bitmap = processingManager.ApplyMerging(bitmap, x, y, mergingThreshold);
                             break;
                         default:
                             throw new CommandException(
@@ -323,7 +434,8 @@ namespace Image_processing
 
                 stopWatch.Stop();
 
-                Console.WriteLine($"Time elapsed: {stopWatch.ElapsedMilliseconds}ms");
+                ConsoleManager.WriteLineWithForegroundColor($"Time elapsed: {stopWatch.ElapsedMilliseconds}ms",
+                    ConsoleColor.Yellow);
             }
             catch (Exception ex)
             {

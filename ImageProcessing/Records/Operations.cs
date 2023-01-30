@@ -78,6 +78,25 @@
         #endregion
         #endregion
 
+        #region Task 4
+        #region Fourier Transform
+        public const string DiscreteFourierTransform = "--dft";
+        public const string InverseDiscreteFourierTransform = "--idft";
+        public const string FastFourierTransform = "--fft";
+        public const string InverseFastFourierTransform = "--ifft";
+        #endregion
+
+        #region Filters in frequency domain
+        public const string LowPassFilter = "--lowpass";
+        public const string HighPassFilter = "--highpass";
+        public const string BandPassFilter = "--bandpass";
+        public const string BandCutFilter = "--bandcut";
+        public const string HighPassWithEdgeDirection = "--edgehighpass";
+        public const string PhaseModifyingFilter = "--phase";
+        #endregion
+
+        #endregion
+
         public static Dictionary<string, string> OperationsDictionary { get; } = new Dictionary<string, string>()
         {
             {Help, "Displays all available commands with description"},
@@ -105,7 +124,7 @@
             {$"filename {StandardDeviation} charValue (R, G or B)", "Calculates standard deviation"},
             {$"filename {VariationCoefficientI} charValue (R, G or B)", "Calculates variation coefficient I"},
             {$"filename {AsymmetryCoefficient} charValue (R, G or B)", "Calculates asymmetry coefficient"},
-            {$"filename {FlatteningCoefficient} charValye (R, G or B)", "Calculates flattening coefficient" },
+            {$"filename {FlatteningCoefficient} charValue (R, G or B)", "Calculates flattening coefficient" },
             {$"filename {VariationCoefficientII} charValue (R, G or B)", "Calculates variation coefficient II"},
             {$"filename {InformationSourceEntropy} charValue (R, G or B)", "Calculates information source entropy"},
             {$"filename {ExtractionOfDetailsI} intValue (1, 2, 3, 4), masks: N, NE, SE, S", "Applies extraction of details"},
@@ -120,7 +139,18 @@
             {$"filename {M1Operation1} intValue (1-18)", "Applies 1st morphological operation: dilated bitmap / bitmap"},
             {$"filename {M1Operation2} intValue (1-18)", "Applies 2nd morphological operation: bitmap / erosed bitmap"},
             {$"filename {M1Operation3} intValue (1-18)", "Applies 3rd morphological operation: dilated bitmap / erosed bitmap"},
-            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"}
+            {$"filename {Merging} intValue (x coordinate) intValue (y coordinate) intValue (threshold)", "Applies merging"},
+            {$"*PART4*", ""},
+            {$"filename {DiscreteFourierTransform}", "Applies the Discrete Fourier Transform to the given image and displays the resulting visualization."},
+            {$"filename {InverseDiscreteFourierTransform}", "Applies the inverse Discrete Fourier Transform to the given image and displays the resulting visualization."},
+            {$"filename {FastFourierTransform}", "Applies the Fast Fourier Transform to the given image and displays the resulting visualization."},
+            {$"filename {InverseFastFourierTransform}", "Applies the inverse Fast Fourier Transform to the given image and displays the resulting visualization."},
+            {$"filename {LowPassFilter} intValue charValue [y/n]", "Applies a low-pass filter to the given image with a threshold value, with the option to preserve phase (indicated by 'y' or 'n')"},
+            {$"filename {HighPassFilter} intValue charValue [y/n]", "Applies a high-pass filter to the given image with a threshold value, with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {BandPassFilter} intValue intValue charValue [y/n]", "Applies a band-pass filter to the given image with a range of threshold values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {BandCutFilter} intValue intValue charValue [y/n]", "Applies a band-cut filter to the given image with a range of threshold values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename filename {HighPassWithEdgeDirection} intValue charValue  [y/n]", "Applies a high-pass filter to a given image using a mask image and a threshold value, with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {PhaseModifyingFilter} intValue intValue", "Applies a phase modifying filter to the given image with values k and l."}
         };
     }
 }
