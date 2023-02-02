@@ -83,6 +83,7 @@
         public const string DiscreteFourierTransform = "--dft";
         public const string InverseDiscreteFourierTransform = "--idft";
         public const string FastFourierTransform = "--fft";
+        public const string FastFourierTransformDecimation = "--fftd";
         public const string InverseFastFourierTransform = "--ifft";
         #endregion
 
@@ -144,12 +145,13 @@
             {$"filename {DiscreteFourierTransform}", "Applies the Discrete Fourier Transform to the given image and displays the resulting visualization."},
             {$"filename {InverseDiscreteFourierTransform}", "Applies the inverse Discrete Fourier Transform to the given image and displays the resulting visualization."},
             {$"filename {FastFourierTransform}", "Applies the Fast Fourier Transform to the given image and displays the resulting visualization."},
+            {$"filename {FastFourierTransformDecimation}", "Applies the Fast Fourier Transform to the given image and displays the resulting visualization with Deimation method."},
             {$"filename {InverseFastFourierTransform}", "Applies the inverse Fast Fourier Transform to the given image and displays the resulting visualization."},
-            {$"filename {LowPassFilter} intValue charValue [y/n]", "Applies a low-pass filter to the given image with a threshold value, with the option to preserve phase (indicated by 'y' or 'n')"},
-            {$"filename {HighPassFilter} intValue charValue [y/n]", "Applies a high-pass filter to the given image with a threshold value, with the option to preserve phase (indicated by 'y' or 'n')."},
-            {$"filename {BandPassFilter} intValue intValue charValue [y/n]", "Applies a band-pass filter to the given image with a range of threshold values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
-            {$"filename {BandCutFilter} intValue intValue charValue [y/n]", "Applies a band-cut filter to the given image with a range of threshold values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
-            {$"filename filename {HighPassWithEdgeDirection} intValue charValue  [y/n]", "Applies a high-pass filter to a given image using a mask image and a threshold value, with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {LowPassFilter} intValue charValue [y/n]", "Applies a low-pass filter to the given image with a radius value, with the option to preserve phase (indicated by 'y' or 'n')"},
+            {$"filename {HighPassFilter} intValue charValue [y/n]", "Applies a high-pass filter to the given image with a radius value, with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {BandPassFilter} intValue intValue charValue [y/n]", "Applies a band-pass filter to the given image with a range of radius values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename {BandCutFilter} intValue intValue charValue [y/n]", "Applies a band-cut filter to the given image with a range of radius values (minimum and maximum), with the option to preserve phase (indicated by 'y' or 'n')."},
+            {$"filename filename {HighPassWithEdgeDirection} ", "Applies a high-pass filter to a given image using a mask image."},
             {$"filename {PhaseModifyingFilter} intValue intValue", "Applies a phase modifying filter to the given image with values k and l."}
         };
     }

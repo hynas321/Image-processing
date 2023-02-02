@@ -38,6 +38,7 @@ namespace Image_processing
                 int threshold;
                 char color;
                 char key;
+                int radius;
 
                 stopWatch.Start();
 
@@ -94,6 +95,9 @@ namespace Image_processing
                             case Operations.FastFourierTransform: 
                             bitmap = processingManager.ApplyFft(bitmap).bitmap; 
                             break;
+                     //   case Operations.FastFourierTransformDecimation: 
+                      //      bitmap = processingManager.ApplyFftDecimation(bitmap).bitmap; 
+                      //      break;
                            case Operations.InverseFastFourierTransform:
                            bitmap = processingManager.ApplyInverseFft(bitmap);
                            break;
@@ -284,7 +288,7 @@ namespace Image_processing
                 }
                 //filename --operation intValue charValue
                 else if (args.Length == 4 && args[1].StartsWith("--")
-                                          && int.TryParse(args[2], out threshold)
+                                          && int.TryParse(args[2], out radius)
                                           && char.TryParse(args[3], out key))
                 {
                     string filename = args[0];
@@ -297,14 +301,14 @@ namespace Image_processing
                           switch (operation)
                        {
                            case Operations.LowPassFilter:
-                             bitmap = processingManager.ApplyLowPassFilter(bitmap, threshold, key);
+                             bitmap = processingManager.ApplyLowPassFilter(bitmap, radius, key);
                            break;
-                    //       case Operations.HighPassFilter:
-                    //          bitmap = processingManager.ApplyHighPassFilter(bitmap, threshold, preservePhase);
-                    //            break;
+                           case Operations.HighPassFilter:
+                              bitmap = processingManager.ApplyHighPassFilter(bitmap, radius, key);
+                                break;
                        }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap, operation, threshold);
+                    fileManager.SaveBitmapFile(args[0], bitmap, operation, radius);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
@@ -323,9 +327,9 @@ namespace Image_processing
                         case Operations.RaleighFinalProbabilityDensityFunction:
                             bitmap = processingManager.ApplyRaleigh(bitmap, value1, value2);
                             break;
-                        //   case Operations.PhaseModifyingFilter:
-                        //       bitmap = processingManager.ApplyPhaseModifying(bitmap, value1, value2);
-                        //      break;
+                           case Operations.PhaseModifyingFilter: 
+                               bitmap = processingManager.ApplyPhaseModifying(bitmap, value1, value2);
+                            break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -339,8 +343,7 @@ namespace Image_processing
                 }
                 //filename filename --operation intValue charValue
                 else if (args.Length == 5 && args[2].StartsWith("--")
-                                          && int.TryParse(args[3], out threshold)
-                                          && char.TryParse(args[4], out key))
+                                         )
                 {
                     string filename1 = args[0];
                     string filename2 = args[1];
@@ -348,13 +351,13 @@ namespace Image_processing
 
                     Bitmap bitmap1 = fileManager.LoadBitmapFile(filename1);
                     Bitmap bitmap2 = fileManager.LoadBitmapFile(filename2);
-                    //   bool preservePhase = ProcessingHelper.GetPhasePreservationInput(key);
+
 
                     switch (operation)
                     {
-                        //  case Operations.HighPassWithEdgeDirection:
-                        //     bitmap1 = processingManager.ApplyHighPassEdgeDetectionFilter(bitmap1, bitmap2, threshold, preservePhase);
-                        //     break;
+                          case Operations.HighPassWithEdgeDirection:
+                            bitmap1 = processingManager.ApplyHighPassEdgeDetectionFilter(bitmap1, bitmap2);
+                             break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
@@ -362,7 +365,7 @@ namespace Image_processing
                             );
                     }
 
-                    fileManager.SaveBitmapFile(args[0], bitmap1, operation, threshold);
+                    fileManager.SaveBitmapFile(args[0], bitmap1, operation);
 
                     ConsoleManager.DisplayCommandExecutedSuccesfullyMessage(command);
                 }
@@ -375,17 +378,17 @@ namespace Image_processing
                     string filename = args[0];
                     string operation = args[1];
 
-                    Bitmap bitmap = fileManager.LoadBitmapFile(filename);
-                    //     bool preservePhase = ProcessingHelper.GetPhasePreservationInput(key);
+                    Bitmap bitmap = fileManager.LoadBitmapFile(filename); 
+
 
                     switch (operation)
                     {
-                        //    case Operations.BandPassFilter:
-                        //         bitmap = processingManager.ApplyBandPassFilter(bitmap, value1, value2, preservePhase);
-                        //         break;
-                        //     case Operations.BandCutFilter:
-                        //        bitmap = processingManager.ApplyBandCutFilter(bitmap, value1, value2, preservePhase);
-                        //         break;
+                            case Operations.BandPassFilter:
+                                 bitmap = processingManager.ApplyBandPassFilter(bitmap, value1, value2, key);
+                                 break;
+                             case Operations.BandCutFilter:
+                                bitmap = processingManager.ApplyBandCutFilter(bitmap, value1, value2, key);
+                                 break;
                         default:
                             throw new CommandException(
                                 $"Command {command} is incorrect\n" +
