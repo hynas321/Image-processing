@@ -125,7 +125,7 @@ namespace Image_processing.Managers
                                 continue;
                             }
 
-                            if (mask[a + 1, b + 1] != bitmap.GetPixel(x + a, y + b).R / 255)
+                            if (mask[a + 1, b + 1] != bitmap.GetPixel(x + a, y + b).R / maxColorValue)
                             {
                                 Hmt = false;
                             }
@@ -134,7 +134,7 @@ namespace Image_processing.Managers
 
                     if (Hmt)
                     {
-                        newBitmap.SetPixel(x, y, Color.FromArgb(255, 255, 255));
+                        newBitmap.SetPixel(x, y, Color.FromArgb(maxColorValue, maxColorValue, maxColorValue));
                     }
                     else
                     {
@@ -189,9 +189,9 @@ namespace Image_processing.Managers
                             int newBlueColorValue = blueColorValue1 / blueColorValue2;
 
                             newBitmap.SetPixel(x, y, Color.FromArgb(
-                                Math.Clamp(newRedColorValue, 0, 255),
-                                Math.Clamp(newGreenColorValue, 0, 255),
-                                Math.Clamp(newBlueColorValue, 0, 255)
+                                Math.Clamp(newRedColorValue, 0, maxColorValue),
+                                Math.Clamp(newGreenColorValue, 0, maxColorValue),
+                                Math.Clamp(newBlueColorValue, 0, maxColorValue)
                                 )
                             );
                         }
@@ -209,12 +209,12 @@ namespace Image_processing.Managers
             Stack<Point> pointStack = new Stack<Point>();
 
             bool[,] checkedPoints = new bool[bitmap.Width, bitmap.Height];
-            int maxPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R + threshold, 0, 255);
-            int maxPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).G + threshold, 0, 255);
-            int maxPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).B + threshold, 0, 255);
-            int minPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
-            int minPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
-            int minPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, 255);
+            int maxPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R + threshold, 0, maxColorValue);
+            int maxPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).G + threshold, 0, maxColorValue);
+            int maxPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).B + threshold, 0, maxColorValue);
+            int minPixelValueR = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, maxColorValue);
+            int minPixelValueG = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, maxColorValue);
+            int minPixelValueB = Math.Clamp(bitmap.GetPixel(x, y).R - threshold, 0, maxColorValue);
 
             pointStack.Push(new Point(x, y));
 
@@ -240,7 +240,7 @@ namespace Image_processing.Managers
                         bitmap.GetPixel(point.X, point.Y).G < maxPixelValueG &&
                         bitmap.GetPixel(point.X, point.Y).B < maxPixelValueB)
                     {
-                        newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(255, 255, 255));
+                        newBitmap.SetPixel(point.X, point.Y, Color.FromArgb(maxColorValue, maxColorValue, maxColorValue));
 
                         pointStack.Push(new Point(point.X, point.Y - 1));
                         pointStack.Push(new Point(point.X, point.Y + 1));
@@ -259,7 +259,7 @@ namespace Image_processing.Managers
 
         #region Task 3 private methods
 
-        public int[,] GetMask(int maskNumber)
+        private int[,] GetMask(int maskNumber)
         {
             switch (maskNumber)
             {

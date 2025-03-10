@@ -1,6 +1,6 @@
 ﻿namespace Image_processing.Records
 {
-    public record Operations
+    public class Operations
     {
         public const string Help = "--help";
 

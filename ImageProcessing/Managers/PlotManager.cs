@@ -6,10 +6,9 @@ namespace Image_processing.Managers
 {
     public class PlotManager
     {
-        public static Plot CreatePlot(double[] values, char color)
+        public static Plot CreatePlot(double[] values, char color, int width, int height)
         {
-            Plot plot = new Plot(1280, 720);
-
+            Plot plot = new Plot(width, height);
             BarPlot bar = plot.AddBar(values);
 
             switch (color)

@@ -1,4 +1,4 @@
-﻿namespace Image_processing.Managers
+﻿namespace Image_processing.Helpers
 {
     public class ProcessingHelper
     {

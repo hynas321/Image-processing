@@ -9,10 +9,9 @@ namespace Image_processing.Managers
         public Plot CreateHistogramImage(Bitmap bitmap, char channel)
         {
             int[] colorValues = GetHistogramChannelValues(bitmap, channel);
+            double[] values = Array.ConvertAll<int, double>(colorValues, x => x);
 
-            return PlotManager.CreatePlot(
-                Array.ConvertAll<int, double>(colorValues, x => x), channel
-            );
+            return PlotManager.CreatePlot(values, channel, 1280, 720);
         }
 
         #region H (histogram calculation algorithm)
@@ -22,11 +21,11 @@ namespace Image_processing.Managers
             int[] greenColorHistogramValues = GetHistogramChannelValues(bitmap, 'G');
             int[] blueColorHistogramValues = GetHistogramChannelValues(bitmap, 'B');
 
-            int[] redColorNewBrightness = new int[256];
-            int[] greenColorNewBrightness = new int[256];
-            int[] blueColorNewBrightness = new int[256];
+            int[] redColorNewBrightness = new int[colorRange];
+            int[] greenColorNewBrightness = new int[colorRange];
+            int[] blueColorNewBrightness = new int[colorRange];
 
-            for (int i = 0; i < 256; i++)
+            for (int i = 0; i < colorRange; i++)
             {
                 redColorNewBrightness[i] = CalculateMinInputBrightness(bitmap, i, alpha, redColorHistogramValues, minBrightness);
                 greenColorNewBrightness[i] = CalculateMinInputBrightness(bitmap, i, alpha, greenColorHistogramValues, minBrightness);
@@ -60,7 +59,7 @@ namespace Image_processing.Managers
             double N = bitmap.Width * bitmap.Height;
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 val += m * histogramChannelValues[m];
             }
@@ -75,7 +74,7 @@ namespace Image_processing.Managers
             double mean = CalculateMean(bitmap, channel);
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 val += Math.Pow(m - mean, 2) * histogramChannelValues[m];
             }
@@ -104,7 +103,7 @@ namespace Image_processing.Managers
             double standardDeviation = CalculateStandardDeviation(bitmap, channel);
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 val += Math.Pow(m - mean, 3) * histogramChannelValues[m];
             }
@@ -121,7 +120,7 @@ namespace Image_processing.Managers
             double σ = CalculateStandardDeviation(bitmap, channel);
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 val += Math.Pow(m - b, 4) * histogramChannelValues[m];
             }
@@ -135,7 +134,7 @@ namespace Image_processing.Managers
             double N = bitmap.Width * bitmap.Height;
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 val += Math.Pow(histogramChannelValues[m], 2);
             }
@@ -149,7 +148,7 @@ namespace Image_processing.Managers
             int N = bitmap.Width * bitmap.Height;
             int[] histogramChannelValues = GetHistogramChannelValues(bitmap, channel);
 
-            for (int m = 0; m < 256; m++)
+            for (int m = 0; m < colorRange; m++)
             {
                 if (histogramChannelValues[m] > 0)
                 {
@@ -280,7 +279,7 @@ namespace Image_processing.Managers
         #region Task 2 private methods
         private int[] GetHistogramChannelValues(Bitmap bitmap, char channel)
         {
-            int[] colorValues = new int[256];
+            int[] colorValues = new int[colorRange];
 
             for (int y = 0; y < bitmap.Height; y++)
             {

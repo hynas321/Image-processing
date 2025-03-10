@@ -5,6 +5,9 @@ namespace Image_processing.Managers
     //Task 1
     public partial class ProcessingManager
     {
+        private const int colorRange = 256;
+        private const int maxColorValue = 255;
+
         #region B (elementary operations)
         public Bitmap ApplyBrightnessModification(Bitmap bitmap, int value)
         {
@@ -35,9 +38,9 @@ namespace Image_processing.Managers
                 {
                     Color pixel = bitmap.GetPixel(x, y);
 
-                    double red = 255 * Math.Pow((double)pixel.R / 255, alphaValue);
-                    double blue = 255 * Math.Pow((double)pixel.B / 255, alphaValue);
-                    double green = 255 * Math.Pow((double)pixel.G / 255, alphaValue);
+                    double red = maxColorValue * Math.Pow((double)pixel.R / maxColorValue, alphaValue);
+                    double blue = maxColorValue * Math.Pow((double)pixel.B / maxColorValue, alphaValue);
+                    double green = maxColorValue * Math.Pow((double)pixel.G / maxColorValue, alphaValue);
                         
                     Color changedPixel = Color.FromArgb(
                         TruncateColorValue((int)red),
@@ -60,9 +63,9 @@ namespace Image_processing.Managers
                 {
                     Color initialColor = bitmap.GetPixel(x, y);
 
-                    int red = 255 - initialColor.R;
-                    int green = 255 - initialColor.G;
-                    int blue = 255 - initialColor.B;
+                    int red = maxColorValue - initialColor.R;
+                    int green = maxColorValue - initialColor.G;
+                    int blue = maxColorValue - initialColor.B;
 
                     Color reversedColor = Color.FromArgb(red, green, blue);
 
@@ -316,7 +319,7 @@ namespace Image_processing.Managers
 
         public double CalculatePeakSignalToNoiseRatio(Bitmap bitmap1, Bitmap bitmap2)
         {
-            return 10 * Math.Log10(Math.Pow(255, 2) / CalculateSignalToNoiseRatio(bitmap1, bitmap2));
+            return 10 * Math.Log10(Math.Pow(maxColorValue, 2) / CalculateSignalToNoiseRatio(bitmap1, bitmap2));
         }
 
         public double CalculateMaximumDifference(Bitmap bitmap1, Bitmap bitmap2)
@@ -353,9 +356,9 @@ namespace Image_processing.Managers
         #region Task 1 private methods
         private int TruncateColorValue(int colorValue)
         {
-            if (colorValue > 255)
+            if (colorValue > maxColorValue)
             {
-                return 255;
+                return maxColorValue;
             }
             else if (colorValue < 0)
             {

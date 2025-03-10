@@ -13,17 +13,13 @@ namespace Image_processing
         private static Stopwatch stopWatch = new Stopwatch();
         private static ProcessingManager processingManager = new ProcessingManager();
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
-                string originalImagesFolder = "OriginalImages";
-                string modifiedImagesFolder = "ModifiedImages";
-                string plotImagesFolder = "PlotImages";
-                string projectDirectory = Environment.CurrentDirectory;
-                string originalImagesFolderPath = $@"{projectDirectory}\{originalImagesFolder}";
-                string modifiedImagesFolderPath = $@"{projectDirectory}\{modifiedImagesFolder}";
-                string plotImagesFolderPath = $@"{projectDirectory}\{plotImagesFolder}";
+                string originalImagesFolderPath = "OriginalImages";
+                string modifiedImagesFolderPath = "ModifiedImages";
+                string plotImagesFolderPath = "PlotImages";
                 string command = string.Join(" ", args);
 
                 fileManager = new FileManager(
@@ -289,7 +285,6 @@ namespace Image_processing
                     bool preservePhase = ProcessingHelper.GetPhasePreservationInput(key);
 
                     Bitmap bitmap = fileManager.LoadBitmapFile(filename);
-
 
                     switch (operation)
                     {

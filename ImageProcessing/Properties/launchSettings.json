@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ImageProcessing": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}

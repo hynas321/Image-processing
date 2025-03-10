@@ -121,7 +121,7 @@ namespace Image_processing.Managers
                         sum += spatialDomain[b, n] * W;
                     }
 
-                    int calculatedColor = (int)Math.Clamp(sum.Magnitude / newBitmap.Width, 0, 255);
+                    int calculatedColor = (int)Math.Clamp(sum.Magnitude / newBitmap.Width, 0, maxColorValue);
 
                     newBitmap.SetPixel(
                         (k - 1 + newBitmap.Width) % newBitmap.Width,
@@ -265,7 +265,7 @@ namespace Image_processing.Managers
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
-                    int color = (int)Math.Clamp(Math.Abs(columns[y].Magnitude / newBitmap.Width), 0, 255);
+                    int color = (int)Math.Clamp(Math.Abs(columns[y].Magnitude / newBitmap.Width), 0, maxColorValue);
                     Color pixel = Color.FromArgb(1, color, color, color);
 
                     newBitmap.SetPixel(x, y, pixel);
@@ -318,7 +318,7 @@ namespace Image_processing.Managers
 
                 for (int y = 0; y < newBitmap.Height; y++)
                 {
-                    int color = (int)Math.Clamp(Math.Abs(columns[y].Magnitude / newBitmap.Width), 0, 255);
+                    int color = (int)Math.Clamp(Math.Abs(columns[y].Magnitude / newBitmap.Width), 0, maxColorValue);
                     Color pixel = Color.FromArgb(1, color, color, color);
 
                     newBitmap.SetPixel(x, y, pixel);
@@ -415,7 +415,7 @@ namespace Image_processing.Managers
             {
                 for (int y = 0; y < image.Count; y++)
                 {
-                    int calculatedColor = (int)Math.Clamp(Math.Log(Math.Abs(image[y][x].Magnitude)) * 10, 0, 255);
+                    int calculatedColor = (int)Math.Clamp(Math.Log(Math.Abs(image[y][x].Magnitude)) * 10, 0, maxColorValue);
                     Color pixel = Color.FromArgb(1, calculatedColor, calculatedColor, calculatedColor);
 
                     visualizationImage.SetPixel(x, y, pixel);
